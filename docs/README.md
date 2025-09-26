@@ -6,46 +6,26 @@ Welcome to the comprehensive documentation for the AI Simulacra Agents system. T
 
 ### 🚀 Getting Started
 - **[Quick Start Guide](quickstart.md)** - Get up and running in 5 minutes
-- **[Installation Guide](installation.md)** - Detailed setup instructions
-- **[First Simulation](guides/first-simulation.md)** - Your first agent simulation
+- **[System Architecture](ARCHITECTURE.md)** - Complete system overview and design
 
-### 🧠 Cognitive Architecture
-- **[Cognitive Overview](cognitive-architecture.md)** - How agents think, remember, reflect, and plan
-- **[Memory System](guides/memory-system.md)** - Episodic memory and retrieval
-- **[Reflection Engine](guides/reflection-engine.md)** - Automatic insight generation
-- **[Planning System](guides/planning-system.md)** - Autonomous goal-oriented behavior
-- **[LLM Integration](guides/llm-integration.md)** - How AI powers agent cognition
+### 🧠 Agent Systems
+- **[Cognitive Architecture](agents/cognitive-architecture.md)** - How agents think, remember, reflect, and plan
+- **[Behavior System](agents/behavior-system.md)** - LLM-powered decision making and action execution
+- **[Memory System](agents/memory-system.md)** - Episodic memory and hybrid retrieval
 
-### 📖 User Guides
+### 🌍 Simulation Systems
+- **[World State Management](simulation/world-state.md)** - Location tracking and environment management
+- **[Time Management](simulation/time-management.md)** - Tick scheduling and temporal coordination
+- **[Action System](simulation/action-system.md)** - Action execution and effect management
+
+### 📖 Configuration & Usage
 - **[CLI Reference](api/cli-reference.md)** - Complete command-line interface
-- **[Agent Configuration](guides/agent-configuration.md)** - Defining agent personalities
-- **[World Configuration](guides/world-configuration.md)** - Setting up environments
-- **[Simulation Control](guides/simulation-control.md)** - Running and managing simulations
-- **[Data Export](guides/data-export.md)** - Analyzing simulation results
-
-### 🔧 API Documentation
-- **[CLI Commands](api/cli-reference.md)** - Terminal interface reference
-- **[Python API](api/python-api.md)** - Programmatic interface
-- **[Configuration Schema](api/configuration-schema.md)** - Config file formats
-- **[Data Models](api/data-models.md)** - Pydantic schemas and types
-
-### 💡 Examples & Tutorials
-- **[Basic Examples](examples/basic-usage.md)** - Simple simulation scenarios
-- **[Advanced Scenarios](examples/advanced-scenarios.md)** - Complex agent interactions
-- **[Custom Agents](examples/custom-agents.md)** - Creating specialized agents
-- **[Research Use Cases](examples/research-cases.md)** - Academic and research applications
+- **[World Configuration](world-configuration.md)** - Setting up simulation environments
+- **[Storage System](storage/)** - Data persistence and retrieval
 
 ### 🎓 Research Documentation
 - **[Methodology](research/methodology.md)** - Scientific approach and validation
-- **[Cognitive Science](research/cognitive-science.md)** - Theoretical foundations
-- **[Performance Analysis](research/performance.md)** - System benchmarks and analysis
-- **[Academic Citations](research/citations.md)** - How to cite this work
-
-### 🛠️ Development
-- **[Contributing Guide](../CONTRIBUTING.md)** - How to contribute to the project
-- **[Development Setup](guides/development.md)** - Setting up dev environment
-- **[Testing Guide](guides/testing.md)** - Running and writing tests
-- **[Architecture Deep Dive](../ARCHITECTURE.md)** - Technical architecture details
+- **[Academic Citations](research/citations.md)** - References and theoretical foundations
 
 ## 🎯 System Capabilities
 

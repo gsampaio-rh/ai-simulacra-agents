@@ -56,9 +56,9 @@ python main.py reflect isabella   # Trigger self-awareness insights
 ## 📖 Documentation
 
 - **[Quick Start Guide](docs/quickstart.md)** - Get running in 5 minutes
-- **[Cognitive Architecture](docs/cognitive-architecture.md)** - How agents think and learn
+- **[Cognitive Architecture](docs/agents/cognitive-architecture.md)** - How agents think and learn
 - **[CLI Reference](docs/api/cli-reference.md)** - Complete command documentation
-- **[World Configuration](docs/guides/world-configuration.md)** - Design agent environments
+- **[World Configuration](docs/world-configuration.md)** - Design agent environments
 - **[Research Use](docs/research/methodology.md)** - Academic applications and methods
 
 ## 🎯 System Achievements
