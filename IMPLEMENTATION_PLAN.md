@@ -183,12 +183,12 @@ M5: Agents with Planning (1-2 weeks) ✅ COMPLETED 🎯
 ├── Plan-driven action selection
 └── 🎯 DELIVERABLE: Agents act purposefully
 
-M6: Documentation & Polish (1 week) 📚 REORGANIZED
-├── Update README.md with current system state
-├── Enhance ARCHITECTURE.md with implemented features
+M6: Documentation & Polish (1 week) 📚 CURRENT PRIORITY
+├── Update README.md with M1-M5 achievements
+├── Enhance ARCHITECTURE.md with cognitive systems  
 ├── Create comprehensive docs/ directory structure
-├── Agent architecture and behavior documentation
-├── Simulation system and API documentation
+├── Agent cognitive architecture documentation
+├── Research-grade documentation and tutorials
 ├── Getting started tutorials and examples
 └── 🎯 DELIVERABLE: Professional documentation suite
 
@@ -206,7 +206,7 @@ M8: Advanced Features (1-2 weeks) ⚡ PREVIOUSLY M7
 **Total Duration**: 7-14 weeks → **Each milestone delivers WORKING agents**
 **Current Progress**: 6/9 milestones completed ✅ (M5 Planning System achieved! 🎯)
 **Enhanced Features**: Cognitive logging transparency added 🔍
-**Next Phase**: 🤝 **M6 Multi-Agent Interactions** - Now that agents plan autonomously, let them interact socially!
+**Next Phase**: 🤝 **M6 Documentation & Polish**
 
 ## Detailed Milestones
 
@@ -719,11 +719,11 @@ Recent reflections for isabella:
 
 ---
 
-### M6: Documentation & Polish (Week 6-7) 📚 REORGANIZED
+### M6: Documentation & Polish (Week 9-10) 📚 CURRENT PRIORITY
 
 **Goal**: Create comprehensive, professional documentation suite that showcases the system's capabilities and enables easy onboarding.
 
-**Status**: 🎯 CURRENT PRIORITY - Working on this milestone now
+**Status**: 🎯 CURRENT PRIORITY - M5 Planning completed, now focusing on documentation excellence
 **Value Delivered**: 
 - Professional documentation that matches FAANG standards
 - Clear system architecture and component descriptions
@@ -737,15 +737,20 @@ Recent reflections for isabella:
 - Document cognitive architecture and AI behavior patterns
 
 **Tasks**:
-- [x] Reorganize milestone structure (current → M7, docs → M6)
-- [ ] Update README.md with current system capabilities and features
-- [ ] Enhance ARCHITECTURE.md with implemented components and patterns
-- [ ] Create docs/ directory structure with organized content
-- [ ] Document agent cognitive architecture (memory, reflection, planning)
-- [ ] Document simulation system and world state management
-- [ ] Create API reference and CLI command documentation
-- [ ] Write getting started tutorial with practical examples
-- [ ] Create troubleshooting and FAQ documentation
+- [x] Reorganize milestone structure (current → M7, docs → M6)  
+- [ ] **Update README.md** - showcase full system capabilities (M1-M5 achievements)
+- [ ] **Enhanced ARCHITECTURE.md** - document cognitive architecture and implemented systems
+- [ ] **Create docs/ directory** with structured documentation:
+  - [ ] `docs/quickstart.md` - 5-minute getting started guide
+  - [ ] `docs/cognitive-architecture.md` - agent thinking, memory, reflection, planning
+  - [ ] `docs/api-reference.md` - CLI commands and programmatic API
+  - [ ] `docs/examples/` - practical tutorials and demonstrations
+  - [ ] `docs/troubleshooting.md` - common issues and solutions
+- [ ] **Agent Cognitive Documentation** - detailed explanation of LLM-powered behavior
+- [ ] **System Architecture Docs** - simulation engine, world state, data flow
+- [ ] **Developer Guide** - contributing, extending, and customizing agents
+- [ ] **Research Documentation** - academic use, citing, and methodology
+- [ ] **Performance & Scaling** - optimization tips and system limits
 
 **Deliverables**:
 ```bash
@@ -1000,11 +1005,14 @@ jobs:
 - ✅ Enhanced planning visualization in simulation  
 - ✅ Planning integrates with memory and reflection
 
-### M6 Documentation & Polish 📚 CURRENT WORK
-- [ ] Comprehensive documentation covers all implemented features
-- [ ] Professional presentation suitable for research/academic use
-- [ ] Easy onboarding tutorials and examples created
-- [ ] Architecture and API fully documented
+### M6 Documentation & Polish 📚 CURRENT PRIORITY
+- [ ] **Update README.md** with M1-M5 achievements showcase
+- [ ] **Enhance ARCHITECTURE.md** with cognitive systems documentation
+- [ ] **Create docs/ directory** with structured documentation
+- [ ] **Agent Cognitive Documentation** - thinking, memory, reflection, planning
+- [ ] **Getting Started Guide** - 5-minute quickstart tutorial
+- [ ] **API Reference** - CLI commands and programmatic interface
+- [ ] **Research Documentation** - academic use and methodology
 
 ### M7 Multi-Agent Interactions 🎭 PREVIOUSLY M6
 - [ ] Agent-to-agent communication works reliably
