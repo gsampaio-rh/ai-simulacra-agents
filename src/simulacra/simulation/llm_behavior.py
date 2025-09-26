@@ -20,7 +20,8 @@ class LLMBehavior:
         self, 
         world_manager: WorldManager, 
         llm_service: Optional[LLMService] = None,
-        memory_manager: Optional[MemoryManager] = None
+        memory_manager: Optional[MemoryManager] = None,
+        planning_engine: Optional['PlanningEngine'] = None
     ):
         """Initialize LLM behavior system.
         
@@ -28,10 +29,12 @@ class LLMBehavior:
             world_manager: World state manager
             llm_service: LLM service for generating decisions (will create if None)
             memory_manager: Memory manager for retrieving relevant memories (optional)
+            planning_engine: Planning engine for accessing current plans (optional)
         """
         self.world_manager = world_manager
         self.llm_service = llm_service or LLMService()
         self.memory_manager = memory_manager
+        self.planning_engine = planning_engine
     
     async def choose_action_with_reasoning(self, agent: Agent) -> Tuple[Action, str]:
         """Choose an action for an agent using LLM reasoning.
@@ -128,6 +131,21 @@ class LLMBehavior:
             except Exception as e:
                 logger.warning(f"Failed to retrieve memories for {agent.name}: {e}")
         
+        # Get current plan context if planning engine is available
+        current_plan = None
+        current_plan_task = None
+        plan_goals = []
+        
+        if self.planning_engine:
+            try:
+                current_plan = await self.planning_engine.get_current_daily_plan(agent.id)
+                if current_plan:
+                    plan_goals = current_plan.goals
+                    current_plan_task = await self.planning_engine.get_current_task(agent.id)
+                    
+            except Exception as e:
+                logger.warning(f"Failed to retrieve plan for {agent.name}: {e}")
+        
         return {
             "current_location": current_location,
             "place_name": place_name,
@@ -137,7 +155,10 @@ class LLMBehavior:
             "agent_energy": agent.state.energy,
             "agent_mood": agent.state.mood,
             "current_task": agent.state.current_task,
-            "relevant_memories": relevant_memories
+            "relevant_memories": relevant_memories,
+            "current_plan": current_plan,
+            "current_plan_task": current_plan_task,
+            "plan_goals": plan_goals
         }
     
     async def _generate_llm_decision(self, agent: Agent, context: Dict) -> Tuple[Action, str]:
@@ -229,6 +250,21 @@ class LLMBehavior:
                 memory_context += f"  {i}. {memory.content}\n"
             memory_context += "\nConsider these experiences when deciding what to do next."
         
+        # Build planning context
+        planning_context = ""
+        if context['plan_goals']:
+            planning_context = f"\nYour goals for today: {', '.join(context['plan_goals'])}\n"
+            
+        if context['current_plan_task']:
+            task = context['current_plan_task']
+            planning_context += f"Current planned task: {task.description}"
+            if task.location:
+                planning_context += f" (at {task.location})"
+            planning_context += "\n"
+            
+        if planning_context:
+            planning_context += "Consider how your planned activities align with what you want to do right now."
+        
         prompt = f"""You are {agent.name}, a character in a social simulation.
 
 Your background: {agent.bio}
@@ -244,7 +280,9 @@ Current situation:
 
 {memory_context}
 
-What would you like to do next? Think about what this character would naturally want to do given their personality, current situation, social context, and past experiences.
+{planning_context}
+
+What would you like to do next? Think about what this character would naturally want to do given their personality, current situation, social context, past experiences, and planned activities.
 
 Available actions:
 1. MOVE to another location (specify which one from the available destinations)

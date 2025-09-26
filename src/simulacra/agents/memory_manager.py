@@ -191,14 +191,16 @@ class MemoryManager:
         self,
         agent_id: str,
         limit: int = 10,
-        hours: int = 24
+        hours: int = 24,
+        since: Optional[datetime] = None
     ) -> List[Memory]:
         """Get recent memories for an agent.
         
         Args:
             agent_id: ID of the agent
             limit: Maximum number of memories
-            hours: How many hours back to look
+            hours: How many hours back to look (ignored if since is provided)
+            since: Get memories since this datetime
             
         Returns:
             List of recent memories
@@ -206,7 +208,9 @@ class MemoryManager:
         try:
             return await self.sqlite_store.get_recent_memories(
                 agent_id=agent_id,
-                limit=limit
+                limit=limit,
+                since=since,
+                hours=hours if since is None else None
             )
         except Exception as e:
             logger.error(f"Failed to get recent memories for {agent_id}: {e}")

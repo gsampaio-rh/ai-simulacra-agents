@@ -6,6 +6,7 @@ from typing import Dict, List, Optional
 
 from ..agents.memory_manager import MemoryManager
 from ..agents.reflection_engine import ReflectionEngine
+from ..agents.planning_engine import PlanningEngine
 from ..config import get_settings
 from ..config.agent_config import AgentConfigLoader
 from ..config.world_config import WorldConfigLoader
@@ -56,8 +57,18 @@ class SimulationController:
             self.memory_manager, self.storage, self.llm_service, self.settings
         )
         
-        # Behavior system with memory integration
-        self.behavior_system = LLMBehavior(self.world_manager, self.llm_service, self.memory_manager)
+        # Planning system
+        self.planning_engine = PlanningEngine(
+            self.memory_manager, self.storage, self.llm_service, self.settings
+        )
+        
+        # Behavior system with memory and planning integration
+        self.behavior_system = LLMBehavior(
+            self.world_manager, 
+            self.llm_service, 
+            self.memory_manager, 
+            self.planning_engine
+        )
         
         # State
         self.agents: Dict[str, Agent] = {}
@@ -164,13 +175,30 @@ class SimulationController:
             location = self.world_manager.get_agent_location(agent_id)
             place_info = self.world_manager.get_place_info(location) if location else None
             
+            # Get planning information for the agent
+            planning_info = {"has_plan": False}
+            try:
+                current_plan = await self.planning_engine.get_current_daily_plan(agent_id)
+                current_task = await self.planning_engine.get_current_task(agent_id)
+                
+                planning_info = {
+                    "has_plan": current_plan is not None,
+                    "current_goal": current_plan.goals[0] if current_plan and current_plan.goals else None,
+                    "current_task": current_task.description if current_task else None,
+                    "current_task_location": current_task.location if current_task else None,
+                    "plan_blocks_count": len(current_plan.hourly_blocks) if current_plan else 0
+                }
+            except Exception as e:
+                planning_info = {"error": str(e)}
+            
             agent_summaries[agent_id] = {
                 "name": agent.name,
                 "location": location,
                 "location_name": place_info["name"] if place_info else "unknown",
                 "energy": agent.state.energy,
                 "mood": agent.state.mood,
-                "status": agent.state.status.value if hasattr(agent.state.status, 'value') else str(agent.state.status)
+                "status": agent.state.status.value if hasattr(agent.state.status, 'value') else str(agent.state.status),
+                "planning": planning_info
             }
         
         # Log beautiful tick completion
@@ -260,7 +288,22 @@ class SimulationController:
             except Exception as e:
                 logger.error(f"Failed to form memory for {agent.name}: {e}")
             
-            # TODO: In M5, we'll add planning updates here
+            # M5: Check if agent should update their daily plan
+            try:
+                if await self.planning_engine.should_plan(agent):
+                    logger.info(f"Triggering daily planning for {agent.name}")
+                    daily_plan = await self.planning_engine.generate_daily_plan(agent)
+                    
+                    if daily_plan:
+                        # Create plan summary for beautiful logging
+                        plan_summary = self._create_plan_summary(daily_plan)
+                        
+                        # Log plan generation with detailed summary
+                        self.sim_logger.log_agent_planning(agent.name, len(daily_plan.hourly_blocks), plan_summary)
+                        logger.info(f"Generated daily plan for {agent.name} with {len(daily_plan.hourly_blocks)} time blocks")
+                        
+            except Exception as e:
+                logger.error(f"Failed to generate plan for {agent.name}: {e}")
         except Exception as e:
             logger.error(f"Error in _process_agent_tick for {agent.name}: {e}")
             # Log error beautifully too
@@ -344,11 +387,67 @@ class SimulationController:
             "available_actions": self.action_executor.get_available_actions(agent_id)
         }
         
+        # Add planning information
+        try:
+            # Note: These are synchronous calls for display purposes
+            # The actual planning engine uses async methods
+            details["planning"] = {
+                "has_plan": False,
+                "current_goal": None,
+                "current_activity": None,
+                "current_location_matches_plan": False,
+                "time_block_status": None
+            }
+        except Exception as e:
+            # Don't fail if planning info is unavailable
+            details["planning"] = {"error": str(e)}
+        
         # Log beautifully if requested
         if log_beautifully:
             self.sim_logger.log_agent_detail(details)
         
         return details
+    
+    def _create_plan_summary(self, daily_plan) -> str:
+        """Create a beautiful summary of the daily plan for logging.
+        
+        Args:
+            daily_plan: DailyPlan object
+            
+        Returns:
+            Formatted plan summary string
+        """
+        summary_parts = []
+        
+        # Add goals
+        if daily_plan.goals:
+            goals_text = " & ".join(daily_plan.goals[:2])  # Show first 2 goals
+            if len(daily_plan.goals) > 2:
+                goals_text += f" + {len(daily_plan.goals) - 2} more"
+            summary_parts.append(f"🎯 Goals: {goals_text}")
+        
+        # Add time blocks summary
+        if daily_plan.hourly_blocks:
+            time_blocks = []
+            for block in daily_plan.hourly_blocks[:2]:  # Show first 2 blocks
+                time_range = f"{block.start_time.strftime('%H:%M')}-{block.end_time.strftime('%H:%M')}"
+                activity = block.activity[:40] + "..." if len(block.activity) > 40 else block.activity
+                time_blocks.append(f"{time_range}: {activity}")
+            
+            if len(daily_plan.hourly_blocks) > 2:
+                time_blocks.append(f"... + {len(daily_plan.hourly_blocks) - 2} more blocks")
+            
+            summary_parts.append(f"📅 Schedule:\n" + "\n".join(f"   • {block}" for block in time_blocks))
+        
+        # Add current task if available
+        if daily_plan.hourly_blocks:
+            current_block = daily_plan.hourly_blocks[0]  # Assume first block is current
+            if current_block.tasks:
+                current_task = current_block.tasks[0]
+                task_desc = current_task.description[:30] + "..." if len(current_task.description) > 30 else current_task.description
+                summary_parts.append(f"📌 Next up: {task_desc}")
+        
+        return "\n\n".join(summary_parts)
     
     def export_simulation_data(self) -> Dict[str, str]:
         """Export current simulation data for analysis.

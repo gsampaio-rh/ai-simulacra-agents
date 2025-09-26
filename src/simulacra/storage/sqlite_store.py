@@ -3,7 +3,7 @@
 import json
 import logging
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 from uuid import UUID
@@ -219,7 +219,9 @@ class SQLiteStore:
         self, 
         agent_id: str, 
         limit: int = 10,
-        memory_types: Optional[List[str]] = None
+        memory_types: Optional[List[str]] = None,
+        since: Optional[datetime] = None,
+        hours: Optional[int] = None
     ) -> List[Memory]:
         """Get recent memories for an agent."""
         await self.connect()
@@ -231,6 +233,15 @@ class SQLiteStore:
             WHERE agent_id = ?
         """
         params = [agent_id]
+        
+        # Add time filtering
+        if since:
+            query += " AND timestamp >= ?"
+            params.append(since.isoformat())
+        elif hours:
+            cutoff_time = datetime.now() - timedelta(hours=hours)
+            query += " AND timestamp >= ?"
+            params.append(cutoff_time.isoformat())
         
         if memory_types:
             placeholders = ",".join("?" * len(memory_types))
@@ -447,6 +458,127 @@ class SQLiteStore:
         
         return reflections
     
+    # Plan storage methods
+    async def add_plan(
+        self,
+        plan_id: str,
+        agent_id: str,
+        plan_type: str,
+        content: str,
+        date_for: Optional[datetime.date] = None,
+        start_time: Optional[datetime] = None,
+        end_time: Optional[datetime] = None,
+        status: str = "pending"
+    ) -> None:
+        """Add a new plan to storage."""
+        await self.connect()
+        
+        await self._connection.execute("""
+            INSERT OR REPLACE INTO plans (
+                id, agent_id, plan_type, content, date_for, 
+                start_time, end_time, status, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            plan_id,
+            agent_id,
+            plan_type,
+            content,
+            date_for.isoformat() if date_for else None,
+            start_time.isoformat() if start_time else None,
+            end_time.isoformat() if end_time else None,
+            status,
+            datetime.now().isoformat(),
+            datetime.now().isoformat()
+        ))
+        
+        await self._connection.commit()
+    
+    async def get_plans(
+        self,
+        agent_id: Optional[str] = None,
+        plan_type: Optional[str] = None,
+        date_for: Optional[datetime.date] = None,
+        status: Optional[str] = None,
+        limit: int = 10
+    ) -> List[Dict[str, Any]]:
+        """Get plans matching the criteria."""
+        await self.connect()
+        
+        conditions = []
+        params = []
+        
+        if agent_id:
+            conditions.append("agent_id = ?")
+            params.append(agent_id)
+        
+        if plan_type:
+            conditions.append("plan_type = ?")
+            params.append(plan_type)
+        
+        if date_for:
+            conditions.append("date_for = ?")
+            params.append(date_for.isoformat())
+        
+        if status:
+            conditions.append("status = ?")
+            params.append(status)
+        
+        where_clause = " AND ".join(conditions) if conditions else "1=1"
+        params.append(limit)
+        
+        cursor = await self._connection.execute(f"""
+            SELECT id, agent_id, plan_type, content, date_for, 
+                   start_time, end_time, status, created_at, updated_at
+            FROM plans
+            WHERE {where_clause}
+            ORDER BY created_at DESC
+            LIMIT ?
+        """, params)
+        
+        rows = await cursor.fetchall()
+        plans = []
+        
+        for row in rows:
+            plan = {
+                "id": row[0],
+                "agent_id": row[1],
+                "plan_type": row[2],
+                "content": row[3],
+                "date_for": row[4],
+                "start_time": row[5],
+                "end_time": row[6],
+                "status": row[7],
+                "created_at": row[8],
+                "updated_at": row[9]
+            }
+            plans.append(plan)
+        
+        return plans
+    
+    async def update_plan_status(self, plan_id: str, status: str) -> bool:
+        """Update the status of a plan."""
+        await self.connect()
+        
+        cursor = await self._connection.execute("""
+            UPDATE plans 
+            SET status = ?, updated_at = ?
+            WHERE id = ?
+        """, (status, datetime.now().isoformat(), plan_id))
+        
+        await self._connection.commit()
+        return cursor.rowcount > 0
+    
+    async def delete_plan(self, plan_id: str) -> bool:
+        """Delete a plan."""
+        await self.connect()
+        
+        cursor = await self._connection.execute("""
+            DELETE FROM plans WHERE id = ?
+        """, (plan_id,))
+        
+        await self._connection.commit()
+        return cursor.rowcount > 0
+
     # Utility methods
     async def get_database_stats(self) -> Dict[str, Any]:
         """Get database statistics."""
@@ -455,7 +587,7 @@ class SQLiteStore:
         stats = {}
         
         # Count records in each table
-        tables = ["agents", "memories", "reflections", "events", "places", "objects"]
+        tables = ["agents", "memories", "reflections", "events", "places", "objects", "plans"]
         for table in tables:
             cursor = await self._connection.execute(f"SELECT COUNT(*) FROM {table}")
             count = await cursor.fetchone()

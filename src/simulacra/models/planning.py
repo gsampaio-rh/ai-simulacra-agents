@@ -39,7 +39,7 @@ class Task(BaseModel):
     duration_minutes: int = Field(
         default=5, 
         ge=1, 
-        le=60,
+        le=480,  # Max 8 hours for longer tasks
         description="Expected duration in minutes"
     )
     parameters: Dict[str, Any] = Field(

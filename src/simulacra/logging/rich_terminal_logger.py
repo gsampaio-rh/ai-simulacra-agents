@@ -213,6 +213,49 @@ Autonomous Agent Simulation
             }
         })
     
+    def log_agent_planning(
+        self,
+        agent_name: str,
+        blocks_count: int,
+        plan_summary: Optional[str] = None
+    ) -> None:
+        """Log agent planning generation with beautiful formatting."""
+        # Create planning content
+        planning_content = Text()
+        
+        if plan_summary:
+            # Show the rich plan summary instead of generic message
+            planning_content.append("🎯 DAILY PLAN GENERATED\n\n", style="bold bright_yellow")
+            planning_content.append(f"{plan_summary}", style="white")
+        else:
+            # Fallback to basic message if no summary
+            planning_content.append(f"🎯 DAILY PLAN GENERATED\n", style="bold bright_yellow")
+            planning_content.append(f"📋 Created plan with {blocks_count} time blocks", style="white")
+        
+        # Display with yellow theme for planning
+        self.console.print(Panel(
+            planning_content,
+            title=f"🗓️ {agent_name}",
+            border_style="bright_yellow",
+            padding=(1, 2),
+            width=100
+        ))
+        self.console.print()  # Add spacing
+        
+        # Store for data export
+        self._agent_actions.append({
+            "tick": self._tick_count,
+            "timestamp": datetime.now().isoformat(),
+            "agent_name": agent_name,
+            "action": "planning",
+            "result": f"Generated daily plan with {blocks_count} blocks",
+            "success": True,
+            "metadata": {
+                "blocks_count": blocks_count,
+                "plan_summary": plan_summary
+            }
+        })
+    
     def _create_mini_energy_bar(self, energy: float) -> Text:
         """Create a compact energy bar."""
         bar_length = 8
@@ -257,15 +300,20 @@ Autonomous Agent Simulation
         table.add_column("Agent", style="cyan", min_width=15)
         table.add_column("Location", style="green", min_width=15)
         table.add_column("Energy", style="yellow", justify="right")
+        table.add_column("Plan", style="bright_yellow", min_width=20)
         
         for agent_id, agent_data in agent_summaries.items():
             energy = agent_data.get('energy', 100)
             energy_bar = self._create_energy_bar(energy)
             
+            # Create compact planning info
+            planning_info = self._create_planning_status(agent_data.get('planning', {}))
+            
             table.add_row(
                 agent_data.get('name', agent_id),
                 agent_data.get('location_name', 'unknown'),
-                energy_bar
+                energy_bar,
+                planning_info
             )
         
         self.console.print()
@@ -294,6 +342,29 @@ Autonomous Agent Simulation
         bar.append(f" {energy:.0f}%", style="white")
         
         return bar
+    
+    def _create_planning_status(self, planning_data: Dict[str, Any]) -> Text:
+        """Create compact planning status display."""
+        status = Text()
+        
+        if planning_data.get('error'):
+            status.append("❌ Error", style="red")
+        elif planning_data.get('has_plan'):
+            # Show plan status with current activity
+            status.append("📋 ", style="bright_yellow")
+            
+            if planning_data.get('current_task'):
+                # Truncate task to fit in column
+                task = planning_data['current_task']
+                if len(task) > 18:
+                    task = task[:15] + "..."
+                status.append(task, style="green")
+            else:
+                status.append("Planning", style="dim yellow")
+        else:
+            status.append("📋 No plan", style="dim")
+        
+        return status
     
     def log_agent_detail(self, agent_details: Dict[str, Any]) -> None:
         """Log detailed agent information beautifully."""

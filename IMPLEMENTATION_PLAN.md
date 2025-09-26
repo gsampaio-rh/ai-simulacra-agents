@@ -177,26 +177,36 @@ Enhanced Cognitive Logging ✅ COMPLETED 🔍
 ├── ✅ Process completion confirmation
 └── 🎯 DELIVERABLE: Full AI cognition visibility ✅
 
-M5: Agents with Planning (1-2 weeks) 🎯 NEXT PRIORITY
+M5: Agents with Planning (1-2 weeks) ✅ COMPLETED 🎯
 ├── Goal-based behavior using reflection insights
 ├── Daily/hourly planning with LLM generation
 ├── Plan-driven action selection
 └── 🎯 DELIVERABLE: Agents act purposefully
 
-M6: Multi-Agent Interactions (1-2 weeks)
+M6: Documentation & Polish (1 week) 📚 REORGANIZED
+├── Update README.md with current system state
+├── Enhance ARCHITECTURE.md with implemented features
+├── Create comprehensive docs/ directory structure
+├── Agent architecture and behavior documentation
+├── Simulation system and API documentation
+├── Getting started tutorials and examples
+└── 🎯 DELIVERABLE: Professional documentation suite
+
+M7: Multi-Agent Interactions (1-2 weeks) 🎭 PREVIOUSLY M6
 ├── Agent-to-agent communication
 ├── Social dynamics and relationships
 └── 🎯 DELIVERABLE: Agents interact meaningfully
 
-M7: Advanced Features (1-2 weeks)
+M8: Advanced Features (1-2 weeks) ⚡ PREVIOUSLY M7
 ├── Advanced hybrid retrieval optimization
 ├── Complex multi-agent planning coordination
 └── 🎯 DELIVERABLE: Sophisticated emergent behavior
 ```
 
-**Total Duration**: 6-13 weeks → **Each milestone delivers WORKING agents**
-**Current Progress**: 5/8 milestones completed ✅ (M4 Reflection System achieved! ✨)
+**Total Duration**: 7-14 weeks → **Each milestone delivers WORKING agents**
+**Current Progress**: 6/9 milestones completed ✅ (M5 Planning System achieved! 🎯)
 **Enhanced Features**: Cognitive logging transparency added 🔍
+**Next Phase**: 🤝 **M6 Multi-Agent Interactions** - Now that agents plan autonomously, let them interact socially!
 
 ## Detailed Milestones
 
@@ -638,43 +648,148 @@ Recent reflections for isabella:
 
 ---
 
-### M5: Agents with Planning (Week 8-9) 🎯 NEXT PRIORITY
+### M5: Agents with Planning (Week 8-9) ✅ COMPLETED 🎯
 
 **Goal**: Agents act with purpose, making plans and working toward goals.
 
-**Value Delivered**:
-- Agents have daily goals and plans
-- Behavior becomes more purposeful and consistent
-- Planning integrates with memory and reflection
+**Status**: ✅ COMPLETED with autonomous planning and beautiful visualization
 
-**Implementation Strategy**:
-- Planning engine that creates daily and hourly plans
-- LLM-generated plans based on agent personality + memories
-- Action selection driven by current plan
+**Value Delivered**: ✅ COMPLETED
+- ✅ Agents automatically generate daily goals and plans
+- ✅ Behavior becomes purposeful and plan-driven
+- ✅ Planning integrates with memory and reflection systems
+- ✅ Enhanced UX with beautiful planning displays
 
-**Tasks**:
-- [ ] Implement PlanningEngine for daily/hourly planning
-- [ ] LLM integration for goal-oriented plan generation
-- [ ] Connect planning to action selection
-- [ ] Plans evolve based on memories and reflections
-- [ ] CLI to inspect and modify agent plans
+**Implementation Strategy**: ✅ COMPLETED
+- ✅ PlanningEngine creates daily and hourly plans with time blocks
+- ✅ LLM-generated plans based on agent personality + memories + reflections
+- ✅ Action selection influenced by current plan context
+- ✅ Plans automatically update based on significant experiences
 
-**Deliverables**:
+**Tasks**: ✅ ALL COMPLETED
+- ✅ Implement PlanningEngine for daily/hourly planning
+- ✅ LLM integration for goal-oriented plan generation  
+- ✅ Connect planning to action selection in LLMBehavior
+- ✅ Plans evolve based on memories and reflections
+- ✅ CLI to inspect and modify agent plans
+- ✅ Enhanced planning visualization in simulation steps
+- ✅ Planning status in agent display panels
+
+**Deliverables**: ✅ ACHIEVED
 ```bash
-# After M5:
-> plan isabella
-Daily Plan for Isabella:
-Goal: Create a welcoming environment that brings the community together
-Morning: Open cafe, prepare fresh pastries, greet early customers
-Afternoon: Host informal gathering, encourage conversations between customers
-Evening: Close cafe, plan tomorrow's community event
+# M5 Planning System Achieved:
+> python main.py plan isabella
+╭───────────────────── 🗓️ Isabella Rodriguez's Daily Plan ─────────────────────╮
+│ 📅 Daily Plan for 2025-09-26                                                │
+│ 🎯 Goals for Today:                                                         │
+│   1. To take a moment for self-care, recharge, and connect with my          │
+│   community by hosting an intimate gathering at the cafe.                   │
+│ 📋 Schedule:                                                                │
+│   ✅ 09:00 - 12:00 - Take some time for self-care by practicing yoga...     │
+│     📌 Take some time for self-care by practicing yoga and meditation...     │
+╰──────────────────────────────────────────────────────────────────────────────╯
 
-Current Task: "Preparing for afternoon social hour" (30% complete)
+# Enhanced Simulation Display:
+📊 Agent Status:
+ Isabella Rodriguez  Community Cafe   ██████████ 100%  📋 Planning         
+ John Kim            Main Street      ██████████ 100%  📋 Planning         
+ Maria Santos        Main Street      ██████████ 100%  📋 Planning         
+
+# Automatic Planning During Simulation:
+╭────────────────────────── 🗓️ Isabella Rodriguez ─────────────────────────────╮
+│ 🎯 DAILY PLAN GENERATED                                                     │
+│                                                                             │
+│ 🎯 Goals: Take a moment to recharge and reflect on my daily routine         │
+│ 📅 Schedule:                                                                │
+│    • 09:00-12:00: Take some time for self-care by practic...               │
+│ 📌 Next up: Take some time for self-care by...                             │
+╰─────────────────────────────────────────────────────────────────────────────╯
 ```
+
+**Files Enhanced**:
+- ✅ `src/simulacra/agents/planning_engine.py` (new - planning logic)
+- ✅ `src/simulacra/models/planning.py` (enhanced - planning data models)  
+- ✅ `src/simulacra/simulation/simulation_controller.py` (enhanced - planning integration)
+- ✅ `src/simulacra/simulation/llm_behavior.py` (enhanced - plan-aware decisions)
+- ✅ `src/simulacra/storage/sqlite_store.py` (enhanced - plan persistence)
+- ✅ `src/simulacra/cli/main.py` (enhanced - planning commands and displays)
+- ✅ `src/simulacra/logging/rich_terminal_logger.py` (enhanced - planning visualization)
+
+**Key Achievement**: Agents now think, remember, reflect, AND plan! Complete autonomous goal-oriented behavior with beautiful UX for planning inspection and real-time planning status during simulation.
 
 ---
 
-### M6: Multi-Agent Interactions (Week 10-11)
+### M6: Documentation & Polish (Week 6-7) 📚 REORGANIZED
+
+**Goal**: Create comprehensive, professional documentation suite that showcases the system's capabilities and enables easy onboarding.
+
+**Status**: 🎯 CURRENT PRIORITY - Working on this milestone now
+**Value Delivered**: 
+- Professional documentation that matches FAANG standards
+- Clear system architecture and component descriptions
+- Easy onboarding for new users and contributors
+- Research-grade documentation for academic use
+
+**Implementation Strategy**:
+- Update existing README and ARCHITECTURE with current state
+- Create comprehensive docs/ directory with structured content
+- Include practical examples, tutorials, and API references
+- Document cognitive architecture and AI behavior patterns
+
+**Tasks**:
+- [x] Reorganize milestone structure (current → M7, docs → M6)
+- [ ] Update README.md with current system capabilities and features
+- [ ] Enhance ARCHITECTURE.md with implemented components and patterns
+- [ ] Create docs/ directory structure with organized content
+- [ ] Document agent cognitive architecture (memory, reflection, planning)
+- [ ] Document simulation system and world state management
+- [ ] Create API reference and CLI command documentation
+- [ ] Write getting started tutorial with practical examples
+- [ ] Create troubleshooting and FAQ documentation
+
+**Deliverables**:
+```bash
+# After M6:
+docs/
+├── README.md                    # Enhanced project overview
+├── ARCHITECTURE.md              # Updated technical architecture
+├── getting-started/
+│   ├── installation.md          # Detailed setup guide
+│   ├── first-simulation.md      # Step-by-step tutorial
+│   └── configuration.md         # Agent and world setup
+├── agents/
+│   ├── cognitive-architecture.md # Memory, reflection, planning
+│   ├── behavior-system.md        # LLM decision making
+│   └── memory-system.md          # Episodic memory and retrieval
+├── simulation/
+│   ├── world-state.md            # Places, objects, events
+│   ├── time-management.md        # Simulation ticks and control
+│   └── action-system.md          # Agent actions and execution
+├── api/
+│   ├── cli-reference.md          # Complete CLI documentation
+│   ├── rest-api.md              # FastAPI endpoints
+│   └── data-models.md           # Pydantic schemas
+├── development/
+│   ├── contributing.md           # Development guidelines
+│   ├── testing.md               # Test strategy and patterns
+│   └── troubleshooting.md       # Common issues and solutions
+└── examples/
+    ├── basic-simulation.md       # Simple example walkthrough
+    ├── advanced-scenarios.md     # Complex multi-agent scenarios
+    └── research-applications.md  # Academic use cases
+```
+
+**Success Criteria**:
+- [ ] Documentation covers all implemented features through M4
+- [ ] Getting started tutorial enables new users to run simulation in <10 minutes
+- [ ] Architecture documentation explains cognitive systems clearly
+- [ ] API documentation includes all CLI commands and endpoints
+- [ ] Examples demonstrate key capabilities and use cases
+- [ ] Professional presentation suitable for academic/research contexts
+
+---
+
+### M7: Multi-Agent Interactions (Week 10-11) 🎭 PREVIOUSLY M6
 
 **Goal**: Agents interact meaningfully with each other through dialogue and social dynamics.
 
@@ -692,7 +807,7 @@ Current Task: "Preparing for afternoon social hour" (30% complete)
 
 **Deliverables**:
 ```bash
-# After M6:
+# After M7:
 > watch cafe
 [T+45] Isabella: "Good morning John! You look like you could use some coffee."
 [T+46] John: "Morning Isabella. Yes, the usual please. How's your day going?"
@@ -707,7 +822,7 @@ Isabella's relationships:
 
 ---
 
-### M7: Advanced Features (Week 12-13)
+### M8: Advanced Features (Week 12-13) ⚡ PREVIOUSLY M7
 
 **Goal**: Sophisticated agent behavior with hybrid retrieval, complex planning, and emergent social dynamics.
 
@@ -874,22 +989,29 @@ jobs:
 - ✅ Semantic search functionality with proper 0-1 similarity scoring
 
 
-### M4 Agent Reflection
-- [ ] LLM-powered reflection quality assessed
-- [ ] Reflection-based insights influence behavior
-- [ ] Terminal UI shows reflection formation
+### M4 Agent Reflection ✅ COMPLETED
+- ✅ LLM-powered reflection quality assessed (automatic importance-triggered insights)
+- ✅ Reflection-based insights influence behavior (stored as high-importance memories)
+- ✅ Terminal UI shows reflection formation (beautiful cyan panels)
 
-### M5 Agent Planning
-- [ ] Daily/hourly planning system operational
-- [ ] Goal-oriented behavior demonstrates coherence
-- [ ] Planning integrates with memory and reflection
+### M5 Agent Planning ✅ COMPLETED 🎯  
+- ✅ Daily/hourly planning system operational
+- ✅ Goal-oriented behavior demonstrates coherence
+- ✅ Enhanced planning visualization in simulation  
+- ✅ Planning integrates with memory and reflection
 
-### M6 Multi-Agent Interactions
+### M6 Documentation & Polish 📚 CURRENT WORK
+- [ ] Comprehensive documentation covers all implemented features
+- [ ] Professional presentation suitable for research/academic use
+- [ ] Easy onboarding tutorials and examples created
+- [ ] Architecture and API fully documented
+
+### M7 Multi-Agent Interactions 🎭 PREVIOUSLY M6
 - [ ] Agent-to-agent communication works reliably
 - [ ] Social dynamics emerge naturally
 - [ ] Group behaviors demonstrate complexity
 
-### M7 Advanced Features
+### M8 Advanced Features ⚡ PREVIOUSLY M7
 - [ ] Hybrid retrieval system optimized
 - [ ] Complex planning scenarios successful
 - [ ] System ready for research and extension

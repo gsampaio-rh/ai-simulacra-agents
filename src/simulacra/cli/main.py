@@ -111,10 +111,30 @@ def agent(agent_id: str, memories: int, query: str, reflections: bool):
         sim_controller = SimulationController()
         await sim_controller.initialize()
         
-        details = sim_controller.get_agent_details(agent_id, log_beautifully=True)
+        details = sim_controller.get_agent_details(agent_id, log_beautifully=False)
         if not details:
             console.print(f"[red]Agent '{agent_id}' not found[/red]")
             return
+        
+        # Get planning information
+        agent = await sim_controller.storage.get_agent(agent_id)
+        if agent:
+            try:
+                current_plan = await sim_controller.planning_engine.get_current_daily_plan(agent_id)
+                current_task = await sim_controller.planning_engine.get_current_task(agent_id)
+                
+                details["planning"] = {
+                    "has_plan": current_plan is not None,
+                    "current_goal": current_plan.goals[0] if current_plan and current_plan.goals else None,
+                    "current_task": current_task.description if current_task else None,
+                    "current_task_location": current_task.location if current_task else None,
+                    "plan_blocks_count": len(current_plan.hourly_blocks) if current_plan else 0
+                }
+            except Exception as e:
+                details["planning"] = {"error": str(e)}
+        
+        # Display agent details with planning information
+        _display_agent_details(details)
         
         # Show recent memories
         try:
@@ -235,6 +255,57 @@ def reflect(agent_id: str):
         await sim_controller.cleanup()
     
     asyncio.run(_reflect())
+
+
+@cli.command()
+@click.argument('agent_id')
+@click.option('--generate', '-g', is_flag=True, help='Generate a new daily plan')
+def plan(agent_id: str, generate: bool):
+    """Show or generate agent's daily plan."""
+    async def _plan():
+        global sim_controller
+        
+        try:
+            if not sim_controller:
+                sim_controller = SimulationController()
+                await sim_controller.initialize()
+            
+            # Get agent details
+            agent = await sim_controller.storage.get_agent(agent_id)
+            
+            if not agent:
+                console.print(f"[red]Error: Agent '{agent_id}' not found[/red]")
+                return
+            
+            if generate:
+                # Generate new plan
+                console.print(f"[yellow]Generating new daily plan for {agent.name}...[/yellow]")
+                daily_plan = await sim_controller.planning_engine.generate_daily_plan(agent)
+                
+                if daily_plan:
+                    console.print(f"[green]✓ Generated daily plan for {agent.name}[/green]")
+                else:
+                    console.print(f"[red]✗ Failed to generate plan for {agent.name}[/red]")
+                    return
+            
+            # Get current plan
+            current_plan = await sim_controller.planning_engine.get_current_daily_plan(agent_id)
+            
+            if not current_plan:
+                console.print(f"[yellow]No daily plan found for {agent.name}[/yellow]")
+                console.print("Use --generate to create a new plan")
+                return
+            
+            # Display the plan beautifully
+            await _display_agent_plan(agent, current_plan, sim_controller.planning_engine)
+            
+        except Exception as e:
+            console.print(f"[red]Error showing plan for {agent_id}: {e}[/red]")
+        finally:
+            if sim_controller:
+                await sim_controller.cleanup()
+    
+    asyncio.run(_plan())
 
 
 @cli.command()
@@ -371,6 +442,73 @@ def _display_status(status: dict):
                 console.print(f"  • {place_name}: {agent_count} agents ({agents})")
 
 
+async def _display_agent_plan(agent, current_plan, planning_engine):
+    """Display agent's daily plan beautifully."""
+    from datetime import datetime, time
+    
+    # Plan header
+    plan_text = Text()
+    plan_text.append(f"📅 Daily Plan for {current_plan.date}\n\n", style="bold bright_yellow")
+    
+    # Goals
+    if current_plan.goals:
+        plan_text.append("🎯 Goals for Today:\n", style="bold bright_white")
+        for i, goal in enumerate(current_plan.goals, 1):
+            plan_text.append(f"  {i}. {goal}\n", style="bright_yellow")
+        plan_text.append("\n")
+    
+    # Time blocks
+    plan_text.append("📋 Schedule:\n", style="bold bright_white")
+    current_time = datetime.now().time()
+    
+    for block in current_plan.hourly_blocks:
+        # Time format
+        end_time = block.end_time
+        time_str = f"{block.start_time.strftime('%H:%M')} - {end_time.strftime('%H:%M')}"
+        
+        # Status indicator
+        if block.start_time <= current_time <= end_time:
+            status_icon = "🔥"  # Currently active
+            status_style = "bold bright_red"
+        elif current_time > end_time:
+            status_icon = "✅"  # Completed
+            status_style = "green"
+        else:
+            status_icon = "⏰"  # Upcoming
+            status_style = "blue"
+        
+        plan_text.append(f"  {status_icon} ", style=status_style)
+        plan_text.append(f"{time_str} - ", style="dim")
+        plan_text.append(f"{block.activity}", style="bright_white")
+        
+        if block.location:
+            plan_text.append(f" (at {block.location})", style="cyan")
+        
+        plan_text.append("\n")
+        
+        # Show tasks if any
+        if block.tasks:
+            for task in block.tasks:
+                task_icon = "📌" if task.status == "pending" else "✓"
+                plan_text.append(f"    {task_icon} {task.description}\n", style="dim")
+    
+    # Current task
+    current_task = await planning_engine.get_current_task(agent.id)
+    if current_task:
+        plan_text.append(f"\n🎯 Current Task: {current_task.description}", style="bold bright_green")
+        if current_task.location:
+            plan_text.append(f" (at {current_task.location})", style="cyan")
+        plan_text.append("\n")
+    
+    console.print(Panel(
+        plan_text,
+        title=f"🗓️ {agent.name}'s Daily Plan",
+        border_style="bright_yellow",
+        padding=(1, 2),
+        width=100
+    ))
+
+
 def _display_agent_details(details: dict):
     """Display detailed agent information."""
     name = details.get('name', 'Unknown')
@@ -409,6 +547,34 @@ def _display_agent_details(details: dict):
         state_text.append(f"Current Task: {current_task}\n", style="magenta")
     
     console.print(Panel(state_text, title="Current State", style="green"))
+    
+    # Planning information
+    planning = details.get('planning', {})
+    if planning and not planning.get('error'):
+        plan_text = Text()
+        
+        if planning.get('has_plan'):
+            plan_text.append("📋 HAS DAILY PLAN\n", style="bold bright_yellow")
+            
+            if planning.get('current_goal'):
+                plan_text.append(f"🎯 Goal: {planning['current_goal']}\n", style="bright_yellow")
+            
+            if planning.get('current_task'):
+                plan_text.append(f"📌 Current Task: {planning['current_task']}", style="bright_green")
+                if planning.get('current_task_location'):
+                    plan_text.append(f" (at {planning['current_task_location']})", style="cyan")
+                plan_text.append("\n")
+            else:
+                # Show next scheduled activity if no current task
+                plan_text.append("📌 No active task right now\n", style="dim")
+            
+            blocks_count = planning.get('plan_blocks_count', 0)
+            if blocks_count > 0:
+                plan_text.append(f"⏰ Plan has {blocks_count} time blocks\n", style="dim")
+        else:
+            plan_text.append("📋 No daily plan", style="dim yellow")
+        
+        console.print(Panel(plan_text, title="📅 Daily Planning", style="bright_yellow"))
     
     # Available actions
     actions = details.get('available_actions', [])
