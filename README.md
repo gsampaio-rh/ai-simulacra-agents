@@ -1,18 +1,19 @@
 # AI Simulacra Agents
 
-A sophisticated AI agent simulation system where autonomous agents think, remember, reflect, and act in a shared world. Built with real LLM-powered cognition for authentic, emergent behavior. No cloud dependencies—runs entirely locally.
+A sophisticated AI agent simulation system where autonomous agents think, remember, reflect, plan, and act in a shared world. Built with real LLM-powered cognition for authentic, emergent behavior. No cloud dependencies—runs entirely locally.
 
-## 🚀 Current Status: Advanced Cognitive Agents
+## 🚀 Current Status: Fully Autonomous Cognitive Agents
 
 **What We've Built**: A complete cognitive agent system with breakthrough features:
 
 - 🧠 **Real LLM-Powered Thinking**: Agents use actual AI reasoning, not hard-coded rules
 - 💾 **Episodic Memory System**: Agents remember all experiences with semantic retrieval
 - ✨ **Automatic Reflection**: Agents gain self-awareness and insights from their experiences
-- 🎨 **Beautiful Terminal UI**: Watch agents think, decide, and reflect in real-time
+- 🎯 **Autonomous Planning**: Agents generate daily plans and work toward personal goals
+- 🎨 **Beautiful Terminal UI**: Watch agents think, plan, decide, and reflect in real-time
 - 📊 **Research-Grade Export**: Complete cognitive process data for analysis
 
-**Breakthrough Achievement**: Our agents demonstrate genuine cognitive behavior—they think, remember past experiences, reflect on patterns, and make contextual decisions that can surprise even their creators.
+**Breakthrough Achievement**: Our agents demonstrate genuine cognitive behavior—they think, remember past experiences, reflect on patterns, autonomously plan their days, and make goal-oriented decisions that can surprise even their creators.
 
 ## 🎯 What Makes This Special
 
@@ -29,22 +30,31 @@ Watch every step of the AI's thinking process:
 🧠 Isabella Rodriguez is thinking...
 💭 "I'm feeling isolated after yesterday's quiet morning at the cafe. I should reach out to the community..."
 ✨ Decision: move to Community Garden
-🎯 Reflection generated: "Isabella craves community connections to fuel her creative energy"
+
+🎯 DAILY PLAN GENERATED
+🎯 Goals: Create a welcoming environment that brings the community together
+📅 Schedule:
+   • 09:00-12:00: Take some time for self-care by practicing yoga...
+📌 Next up: Take some time for self-care by...
+
+💡 Reflection generated: "Isabella craves community connections to fuel her creative energy"
 ```
 
-### Research-Grade Memory System
+### Research-Grade Cognitive Architecture
 - **Episodic Memory**: Every experience stored with LLM-scored importance
 - **Semantic Retrieval**: Find relevant memories using hybrid scoring
 - **Automatic Reflection**: Generate insights when experience accumulates
+- **Autonomous Planning**: Daily goals and time blocks with plan-aware decisions
 
 ## Key Features
 
-- 🧠 **Cognitive Architecture**: LLM-powered thinking, episodic memory, and automatic reflection
+- 🧠 **Complete Cognitive Architecture**: LLM-powered thinking, episodic memory, automatic reflection, and autonomous planning
 - 🔍 **Hybrid Memory Retrieval**: Semantic similarity + recency + importance scoring
+- 🎯 **Goal-Oriented Behavior**: Agents create daily plans and work toward personal objectives
 - 🏠 **Local-First**: Runs entirely locally using Ollama—no API keys or cloud dependencies
 - 📊 **Persistent Memory**: SQLite for structured data, Chroma for vector search
 - 🎨 **Beautiful Terminal UI**: Rich cognitive process visualization with emoji-coded logging
-- 🖥️ **Professional CLI**: Complete simulation control and agent inspection
+- 🖥️ **Professional CLI**: Complete simulation control, agent inspection, and planning commands
 - 📈 **Data Export**: CSV/JSON exports organized by simulation session
 
 ## Architecture
@@ -118,10 +128,12 @@ The system provides a rich CLI for simulation control and agent inspection:
 
 | Command | Description | Example |
 |---------|-------------|---------|
-| `python main.py step` | Run one simulation step | See agents think and act |
+| `python main.py step` | Run one simulation step | See agents think, plan, and act |
 | `python main.py agent <name>` | Inspect agent details | `python main.py agent isabella` |
 | `python main.py agent <name> --memories` | View agent memories | See past experiences |
 | `python main.py agent <name> --reflections` | View agent reflections | See insights and self-awareness |
+| `python main.py plan <name>` | View agent's daily plan | `python main.py plan isabella` |
+| `python main.py plan <name> --generate` | Generate new daily plan | Force plan creation |
 | `python main.py reflect <name>` | Trigger manual reflection | Generate new insights |
 | `python main.py status` | Show world state | See all agent locations |
 
@@ -184,6 +196,29 @@ Recent reflections for isabella:
    Based on 12 memories
 ```
 
+**Step 5: View agent's daily plan**
+```bash
+> python main.py plan isabella
+
+╭───────────────────── 🗓️ Isabella Rodriguez's Daily Plan ─────────────────────╮
+│ 📅 Daily Plan for 2025-09-26                                                │
+│ 🎯 Goals for Today:                                                         │
+│   1. To take a moment for self-care, recharge, and connect with my          │
+│   community by hosting an intimate gathering at the cafe.                   │
+│ 📋 Schedule:                                                                │
+│   ✅ 09:00 - 12:00 - Take some time for self-care by practicing yoga...     │
+│     📌 Take some time for self-care by practicing yoga and meditation...     │
+╰──────────────────────────────────────────────────────────────────────────────╯
+```
+
+**Step 6: Watch planning during simulation**
+```bash
+📊 Agent Status:
+ Isabella Rodriguez  Community Cafe   ██████████ 100%  📋 Planning         
+ John Kim            Main Street      ██████████ 100%  📋 Planning         
+ Maria Santos        Main Street      ██████████ 100%  📋 Planning         
+```
+
 ## Core Concepts
 
 ### 🧠 LLM-Powered Cognition
@@ -238,6 +273,30 @@ score = 0.6 × semantic_similarity + 0.2 × recency + 0.2 × importance
 **Example Reflections**:
 - *"Isabella is craving a sense of community and stability after transitioning between spaces"*
 - *"Isabella's creative energy is fueled by her interactions with people and environments"*
+
+### 🎯 Autonomous Planning System
+
+**Planning Triggers**:
+- No current plan exists for the agent
+- Current plan is stale (over 6 hours old)
+- Significant new experiences (3+ high-importance memories since last plan)
+
+**Planning Process**:
+1. **Context Analysis**: Agent personality, recent memories, and reflection insights
+2. **Goal Generation**: LLM creates meaningful daily objectives
+3. **Time Blocking**: Hierarchical structure (daily plan → hourly blocks → specific tasks)
+4. **Plan Integration**: Action selection considers current plans and goals
+
+**Plan Structure**:
+```
+DailyPlan
+├── Goals: ["Take a moment to recharge and reflect..."]
+├── HourlyBlock (09:00-12:00)
+│   ├── Activity: "Take some time for self-care..."
+│   ├── Location: "Cafe (quiet corner)"
+│   └── Tasks: ["Practice yoga and meditation..."]
+└── Status: Active/Completed/Cancelled
+```
 
 ### 🌍 World State & Simulation
 
@@ -384,17 +443,17 @@ bandit -r agents/ simulation/
 
 ## 🗺️ Development Status & Roadmap
 
-### ✅ Completed Milestones (5/9)
+### ✅ Completed Milestones (6/9)
 
 - **✅ M1: Foundation**: SQLite + Chroma + Ollama integration
 - **✅ M2: Agent Actions**: World state, movement, beautiful terminal UI
 - **✅ M2.5: LLM Cognition**: Breakthrough—real AI thinking replaces rules
 - **✅ M3: Memory System**: Episodic memory with semantic retrieval
 - **✅ M4: Reflection**: Automatic self-awareness and insight generation
+- **✅ M5: Planning System**: Autonomous goal-oriented behavior and daily planning
 
 ### 🎯 Current Focus
 
-- **🎯 M5: Planning System**: Goal-oriented behavior and daily/hourly planning
 - **📚 M6: Documentation**: This milestone—comprehensive docs and polish
 
 ### 🔮 Upcoming Features
@@ -402,7 +461,7 @@ bandit -r agents/ simulation/
 - **🎭 M7: Multi-Agent Interactions**: Agent-to-agent communication and social dynamics
 - **⚡ M8: Advanced Features**: Optimized retrieval and complex emergent behavior
 
-**What We've Achieved**: From simple rule-based agents to sophisticated AI entities with genuine cognitive behavior, episodic memory, and self-reflection capabilities.
+**What We've Achieved**: From simple rule-based agents to sophisticated AI entities with genuine cognitive behavior, episodic memory, self-reflection capabilities, and autonomous planning. Our agents now think, remember, reflect, and plan their days!
 
 See [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) for detailed milestones and technical progress.
 

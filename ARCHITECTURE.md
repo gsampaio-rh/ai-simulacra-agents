@@ -1,10 +1,11 @@
 # System Architecture
 
-This document describes the technical architecture of the AI Simulacra Agents system as of September 2025, detailing implemented components, data flows, and design decisions. This reflects the current state through M4 (Reflection System) with breakthrough LLM-powered cognitive architecture.
+This document describes the technical architecture of the AI Simulacra Agents system as of September 2025, detailing implemented components, data flows, and design decisions. This reflects the current state through M5 (Planning System) with breakthrough LLM-powered cognitive architecture including autonomous planning capabilities.
 
 ## Table of Contents
 
 - [Architecture Overview](#architecture-overview)
+- [Cognitive Architecture](#cognitive-architecture)
 - [Component Details](#component-details)
 - [Data Flow](#data-flow)
 - [Storage Architecture](#storage-architecture)
@@ -40,7 +41,7 @@ The system implements a breakthrough cognitive architecture with real LLM-powere
 │   ┌─────────────┐ ┌─────────────┐                       │
 │   │  Planning   │ │ LLM Service │                       │
 │   │   Engine    │ │ ✅ IMPL     │                       │
-│   │  🚧 M5      │ │(Embeddings) │                       │
+│   │  ✅ IMPL    │ │(Embeddings) │                       │
 │   └─────────────┘ └─────────────┘                       │
 ├─────────────────────────────────────────────────────────┤
 │                Infrastructure Layer                     │
@@ -126,6 +127,113 @@ Agents don't just think—they **remember and learn**:
 creative energy,' and remembering yesterday's satisfying conversation with Maria 
 at the garden, I think I should seek out more social interactions today."
 ```
+
+## Cognitive Architecture
+
+The breakthrough of this system is its authentic cognitive architecture that provides agents with human-like mental processes using real LLM reasoning. Unlike traditional rule-based systems, our agents possess genuine cognitive capabilities:
+
+### 🧠 LLM-Powered Cognition Engine
+
+**Core Innovation**: Real AI reasoning replaces hard-coded behavioral rules.
+
+**Decision Process Flow**:
+```
+1. Context Building → 2. Memory Retrieval → 3. LLM Reasoning → 4. Action Selection
+     ↓                     ↓                    ↓                 ↓
+  • Current location     • Semantic search   • Natural language • Choose from:
+  • Agent state          • Hybrid scoring    • Contextual       • move, wait,
+  • Recent events        • Top 3 memories    • Personality      • observe, interact
+  • Planning context     • Importance        • Goal-oriented    • (with reasoning)
+```
+
+**LLM Integration Points**:
+- **Decision Making**: Natural language reasoning for action selection
+- **Memory Importance**: LLM scores memory significance (0-10 scale)  
+- **Reflection Generation**: Pattern recognition and insight synthesis
+- **Plan Creation**: Goal-oriented daily and hourly planning
+- **Embeddings**: Semantic understanding for memory retrieval
+
+### 💾 Episodic Memory System
+
+**Memory Formation Pipeline**:
+```
+Action/Observation → Importance Scoring → Embedding Generation → Storage
+       ↓                    ↓                     ↓                ↓
+  Raw experience      LLM evaluates         Vector created    SQLite + Chroma
+  (What happened)     relevance (0-10)      for similarity    Persistent storage
+```
+
+**Memory Types**:
+1. **Action Memories**: "I moved from apartment_1 to cafe" (importance: 6.0)
+2. **Observation Memories**: "I saw John at the garden" (importance: 4.0)  
+3. **Reflection Memories**: "I crave community connections" (importance: 8.0)
+
+**Hybrid Retrieval Algorithm**:
+```python
+relevance_score = (
+    0.6 × semantic_similarity +  # Vector cosine similarity
+    0.2 × recency_weight +       # Time decay function
+    0.2 × importance_score       # LLM-scored significance
+)
+```
+
+### ✨ Automatic Reflection Engine
+
+**Reflection Triggering**:
+- **Threshold-Based**: Cumulative importance ≥ 15.0 points
+- **Experience Accumulation**: Monitors ongoing memory formation
+- **Automatic Processing**: No manual intervention required
+
+**Reflection Process**:
+```
+High-Importance Memories → Pattern Analysis → Insight Generation → Memory Storage
+         ↓                       ↓                  ↓                 ↓
+   Recent experiences      LLM identifies      3-5 key insights   Stored as high-
+   (importance > 6.0)      behavioral         about agent        importance (8.0)
+                          patterns            psychology         reflection memories
+```
+
+### 🎯 Autonomous Planning System
+
+**Planning Architecture**:
+```
+Hierarchical Structure:
+DailyPlan
+├── Goals: ["Take a moment to recharge and reflect..."]
+├── HourlyBlock (09:00-12:00)
+│   ├── Activity: "Take some time for self-care..."
+│   ├── Location: "Cafe (quiet corner)"
+│   └── Tasks: [Task(description="Practice yoga...", duration=30)]
+└── Status: Active/Completed/Cancelled
+```
+
+**Planning Triggers** (Autonomous):
+1. **No Current Plan**: Agent has no active daily plan
+2. **Stale Plan**: Current plan is over 6 hours old
+3. **Significant Experiences**: 3+ high-importance memories since last plan
+
+**Plan-Aware Decision Making**:
+- **Context Integration**: Current plans included in LLM decision prompts
+- **Goal Alignment**: Actions consider daily objectives and current tasks
+- **Flexible Execution**: Plans guide but don't rigidly control behavior
+
+### 🔄 Cognitive Loop Integration
+
+**Complete Cognitive Cycle**:
+```
+1. PERCEPTION → 2. MEMORY → 3. REFLECTION → 4. PLANNING → 5. ACTION → (repeat)
+     ↓             ↓           ↓              ↓            ↓
+  Observe        Store &      Generate       Create       Execute with
+  environment    retrieve     insights       goals        LLM reasoning
+  and context    relevant     about self     and plans    informed by
+                experiences                               full context
+```
+
+**Cross-System Integration**:
+- **Memory ↔ Reflection**: High-importance memories trigger reflection
+- **Reflection → Planning**: Insights inform goal generation  
+- **Planning → Action**: Plans provide context for decision-making
+- **Action → Memory**: All actions create new episodic memories
 
 ## Component Details
 
