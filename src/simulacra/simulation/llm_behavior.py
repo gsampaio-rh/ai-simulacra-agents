@@ -153,6 +153,8 @@ class LLMBehavior:
         # Build the decision prompt
         prompt = self._build_decision_prompt(agent, context)
         
+        logger.info(f"🎭 COGNITIVE PROCESS: {agent.name} is thinking and making decisions (location: {context.get('location', 'unknown')})")
+        
         try:
             # Generate LLM response
             response = await self.llm_service.ollama_client.generate(
@@ -168,6 +170,7 @@ class LLMBehavior:
             # Parse the response
             action, reasoning = self._parse_llm_response(response.response, agent, context)
             
+            logger.info(f"🎯 DECISION COMPLETE: {agent.name} chose '{action.action_type}' action")
             return action, reasoning
             
         except Exception as e:

@@ -79,6 +79,8 @@ Format your response as a numbered list:
 
 Focus on insights that would be meaningful for {agent.name}'s future decisions and behavior."""
 
+        logger.info(f"🧠 COGNITIVE PROCESS: Generating reflection insights for {agent.name} (based on {len(memories)} memories)")
+        
         try:
             async with self.ollama_client as client:
                 response = await client.generate(
@@ -94,7 +96,7 @@ Focus on insights that would be meaningful for {agent.name}'s future decisions a
                 # Parse insights from response
                 insights = self._parse_numbered_list(response.response, max_insights)
                 
-                logger.debug(f"Generated {len(insights)} reflection insights for {agent.name}")
+                logger.info(f"✨ REFLECTION COMPLETE: Generated {len(insights)} insights for {agent.name}")
                 return insights
                 
         except Exception as e:

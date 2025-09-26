@@ -124,6 +124,8 @@ class MemoryManager:
         Returns:
             List of relevant memories with scores
         """
+        logger.info(f"🔍 COGNITIVE PROCESS: Retrieving relevant memories for {agent_id} - query: '{context[:50]}...'")
+        
         try:
             # Generate embedding for the context query
             embedding_response = await self.llm_service.ollama_client.embeddings(
@@ -176,7 +178,10 @@ class MemoryManager:
             
             # Sort by final score and return
             enhanced_results.sort(key=lambda x: x.score, reverse=True)
-            return enhanced_results[:limit]
+            final_results = enhanced_results[:limit]
+            
+            logger.info(f"🎯 MEMORY RETRIEVAL: Found {len(final_results)} relevant memories for {agent_id}")
+            return final_results
             
         except Exception as e:
             logger.error(f"Failed to retrieve memories for {agent_id}: {e}")
@@ -264,6 +269,8 @@ class MemoryManager:
         Returns:
             Importance score (0-10)
         """
+        logger.info(f"📊 COGNITIVE PROCESS: Scoring memory importance for {agent.name} - '{content[:50]}...'")
+        
         try:
             # Build prompt for importance scoring
             prompt = f"""Rate the importance of this memory for {agent.name}.
@@ -298,9 +305,12 @@ Respond with just a number from 0-10."""
             numbers = re.findall(r'\d+\.?\d*', response.response)
             if numbers:
                 score = float(numbers[0])
-                return max(0.0, min(10.0, score))  # Clamp to 0-10
+                final_score = max(0.0, min(10.0, score))  # Clamp to 0-10
+                logger.info(f"📈 IMPORTANCE SCORED: {agent.name} memory = {final_score:.1f}/10")
+                return final_score
             else:
                 logger.warning(f"Could not parse importance score from LLM response: {response.response}")
+                logger.info(f"📈 IMPORTANCE SCORED: {agent.name} memory = 3.0/10 (default)")
                 return 3.0  # Default to moderate importance
                 
         except Exception as e:
@@ -326,6 +336,8 @@ Respond with just a number from 0-10."""
         Args:
             memory: Memory to store
         """
+        logger.info(f"🔤 COGNITIVE PROCESS: Generating embedding for {memory.agent_id} memory - '{memory.content[:50]}...'")
+        
         try:
             # Generate embedding using LLM service
             embedding_response = await self.llm_service.ollama_client.embeddings(
@@ -338,6 +350,8 @@ Respond with just a number from 0-10."""
             
             # Update memory with embedding reference
             memory.embedding_id = embedding_id
+            
+            logger.info(f"💾 EMBEDDING STORED: {memory.agent_id} memory embedded and indexed")
             
         except Exception as e:
             logger.error(f"Failed to generate/store embedding for memory {memory.id}: {e}")
