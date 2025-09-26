@@ -138,7 +138,7 @@ CREATE TABLE events (
 **Purpose**: Local LLM inference and embedding generation
 
 **Required Models**:
-- **LLM**: `llama2:7b` or `mistral:7b` for text generation
+- **LLM**: `llama3.2:3b` or `mistral:7b` for text generation
 - **Embeddings**: `nomic-embed-text` for vector generation
 
 **Usage Patterns**:

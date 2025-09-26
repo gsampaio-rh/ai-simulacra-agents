@@ -64,7 +64,7 @@ This project implements the core architecture for agent simulation based on memo
 3. **Install Ollama models**
    ```bash
    # Install required models (adjust based on your hardware)
-   ollama pull llama2:7b
+   ollama pull llama3.2:3b
    ollama pull nomic-embed-text
    ```
 

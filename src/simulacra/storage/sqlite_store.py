@@ -1,6 +1,7 @@
 """SQLite storage implementation for AI Simulacra Agents."""
 
 import json
+import logging
 import sqlite3
 from datetime import datetime
 from pathlib import Path
@@ -9,6 +10,8 @@ from uuid import UUID
 
 import aiosqlite
 from pydantic import BaseModel
+
+logger = logging.getLogger(__name__)
 
 from ..models.agent import Agent, AgentState
 from ..models.event import Event
@@ -58,12 +61,18 @@ class SQLiteStore:
         
         if schema_file.exists():
             schema_sql = schema_file.read_text()
-            # Execute each statement separately
-            for statement in schema_sql.split(';'):
-                statement = statement.strip()
-                if statement:
-                    await self._connection.execute(statement)
-            await self._connection.commit()
+            
+            # Use executescript for handling complex SQL with triggers
+            try:
+                # First, let's just execute the whole script at once
+                await self._connection.executescript(schema_sql)
+                await self._connection.commit()
+            except Exception as e:
+                if "already exists" in str(e):
+                    logger.debug("Schema already exists, continuing...")
+                else:
+                    logger.error(f"Failed to execute schema: {e}")
+                    raise
     
     # Agent operations
     async def create_agent(self, agent: Agent) -> None:

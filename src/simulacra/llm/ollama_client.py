@@ -187,7 +187,7 @@ class OllamaClient:
         """Generate text using Ollama.
         
         Args:
-            model: Model name (e.g., 'llama2:7b')
+            model: Model name (e.g., 'llama3.2:3b')
             prompt: Input prompt
             system: Optional system message
             template: Optional prompt template
