@@ -28,27 +28,56 @@ This document outlines the detailed development roadmap for the AI Simulacra Age
 - **Status**: BREAKTHROUGH - Real AI cognition implemented
 - **Value Delivered**: ✅ Agents now truly THINK using LLM reasoning instead of hard-coded rules
 
-**Key Achievements M1 + M2 + M2.5**:
+**M3 Agents with Memory: ✅ COMPLETED** 🧠
+- **Duration**: 1 day (same day completion!)
+- **Status**: Memory formation, retrieval, and LLM integration working
+- **Value Delivered**: ✅ Agents remember experiences and use them for decision making
+
+**M4 Agents with Reflection: ✅ COMPLETED** ✨
+- **Duration**: 1 day (same day completion!)
+- **Status**: BREAKTHROUGH - Automatic self-awareness and insight generation
+- **Value Delivered**: ✅ Agents automatically reflect and gain insights from their experiences
+
+**Enhanced Cognitive Logging: ✅ COMPLETED** 🔍
+- **Duration**: Same day enhancement
+- **Status**: Complete cognitive process transparency implemented
+- **Value Delivered**: ✅ Full visibility into agent thinking, memory, and reflection processes
+
+**Key Achievements M1 → M4 + Enhancements**:
 - 🏗️ Complete infrastructure foundation (SQLite + Chroma + Ollama)
 - 📊 22+ Pydantic models for all core entities
-- 🤖 LLM services working (embedding, text generation, importance scoring)
+- 🤖 LLM services working (embedding, text generation, importance scoring, reflection)
 - 🌍 Full world state management with places and objects
 - 🎬 Action execution system (move, wait, observe, interact)
 - ⏰ Time management with discrete simulation ticks
-- 🧠 **REAL LLM-POWERED COGNITIVE REASONING** ⭐ **NEW**
-- 🎨 **Beautiful Rich terminal UI with cognitive transparency**
-- 📊 **Research-grade data export (CSV/JSON) for EDA**
-- 🗂️ **Session-organized output structure**
-- 🖥️ **Professional CLI with main.py entry point**
+- 🧠 **REAL LLM-POWERED COGNITIVE REASONING** ⭐
+- 🎨 **Beautiful Rich terminal UI with cognitive transparency** ⭐
+- 📊 **Research-grade data export (CSV/JSON) for EDA** ⭐
+- 🗂️ **Session-organized output structure** ⭐
+- 🖥️ **Professional CLI with main.py entry point** ⭐
 - ✅ Comprehensive testing framework
-- 🎭 **Authentic personality-driven decisions with contextual awareness** ⭐ **NEW**
-- 🔄 **Dynamic, non-deterministic agent behavior** ⭐ **NEW**
+- 🎭 **Authentic personality-driven decisions with contextual awareness** ⭐
+- 🔄 **Dynamic, non-deterministic agent behavior** ⭐
+- 💾 **Episodic memory system with semantic retrieval** ⭐ **NEW**
+- 🔍 **Hybrid memory scoring (semantic + recency + importance)** ⭐ **NEW**
+- ✨ **Automatic reflection triggering based on importance accumulation** ⭐ **NEW**
+- 🧠 **LLM-powered insight generation from memory patterns** ⭐ **NEW**
+- 🔍 **Complete cognitive process transparency with emoji-coded logging** ⭐ **NEW**
 
-**Critical Transformation Achieved**:
+**Critical Transformations Achieved**:
 ❌ **Before M2.5**: 300+ lines of hard-coded if/then personality rules  
 ✅ **After M2.5**: Real AI cognition with authentic, surprising, contextual reasoning
 
-**Next Phase**: 🎯 **M3 Agents with Memory** - Now that agents truly think, let them remember!
+❌ **Before M3**: Agents with no memory of past experiences  
+✅ **After M3**: Agents remember and learn from all experiences
+
+❌ **Before M4**: Agents with no self-awareness or insight  
+✅ **After M4**: Agents automatically reflect and gain deep insights about themselves
+
+❌ **Before Logging**: Opaque AI processes with no visibility  
+✅ **After Logging**: Complete transparency into every cognitive process
+
+**Next Phase**: 🎯 **M5 Agents with Planning** - Now that agents think, remember, and reflect, let them plan purposefully!
 
 ## 🎉 MAJOR BREAKTHROUGH: M2.5 COMPLETED
 
@@ -126,34 +155,48 @@ M2.5: LLM-Powered Agent Thinking (1 day) ✅ COMPLETED 🚀
 ├── ✅ Dynamic contextual thinking (not pre-written templates)
 └── 🎯 DELIVERABLE: Agents truly THINK with LLM cognition ✅
 
-M3: Agents with Memory (1 week) ✅ COMPLETED
-├── Memory storage and retrieval
-├── Basic importance scoring
-└── 🎯 DELIVERABLE: Agents remember what they do
+M3: Agents with Memory (1 week) ✅ COMPLETED 🧠
+├── ✅ Memory formation from actions and observations
+├── ✅ LLM-based importance scoring
+├── ✅ Semantic retrieval with hybrid scoring
+├── ✅ Memory-influenced decision making
+└── 🎯 DELIVERABLE: Agents remember what they do ✅
 
-M4: Agents with Reflection (1-2 weeks)  
-├── LLM-powered reflection
-├── Memory-based insights
-└── 🎯 DELIVERABLE: Agents gain self-awareness
+M4: Agents with Reflection (1-2 weeks) ✅ COMPLETED ✨
+├── ✅ Automatic reflection triggering (importance threshold)
+├── ✅ LLM-powered insight generation from memory patterns
+├── ✅ Reflections stored as high-importance memories
+├── ✅ Beautiful reflection UI with cyan-themed panels
+├── ✅ CLI commands for manual triggering and viewing
+└── 🎯 DELIVERABLE: Agents gain self-awareness ✅
 
-M5: Agents with Planning (1-2 weeks)
-├── Goal-based behavior
-├── Daily planning
+Enhanced Cognitive Logging ✅ COMPLETED 🔍
+├── ✅ Emoji-coded cognitive process identification
+├── ✅ Complete LLM call transparency
+├── ✅ Agent-specific cognitive context tracking
+├── ✅ Process completion confirmation
+└── 🎯 DELIVERABLE: Full AI cognition visibility ✅
+
+M5: Agents with Planning (1-2 weeks) 🎯 NEXT PRIORITY
+├── Goal-based behavior using reflection insights
+├── Daily/hourly planning with LLM generation
+├── Plan-driven action selection
 └── 🎯 DELIVERABLE: Agents act purposefully
 
 M6: Multi-Agent Interactions (1-2 weeks)
 ├── Agent-to-agent communication
-├── Social dynamics
+├── Social dynamics and relationships
 └── 🎯 DELIVERABLE: Agents interact meaningfully
 
 M7: Advanced Features (1-2 weeks)
-├── Hybrid retrieval
-├── Complex planning
-└── 🎯 DELIVERABLE: Sophisticated agent behavior
+├── Advanced hybrid retrieval optimization
+├── Complex multi-agent planning coordination
+└── 🎯 DELIVERABLE: Sophisticated emergent behavior
 ```
 
 **Total Duration**: 6-13 weeks → **Each milestone delivers WORKING agents**
-**Current Progress**: 4/8 milestones completed ✅ (M3 Memory System achieved! 🧠)
+**Current Progress**: 5/8 milestones completed ✅ (M4 Reflection System achieved! ✨)
+**Enhanced Features**: Cognitive logging transparency added 🔍
 
 ## Detailed Milestones
 
@@ -480,45 +523,122 @@ Memories for 'social interactions' (agent: isabella):
 
 ---
 
-### M4: Agents with Reflection (Week 6-7) 🎯 NEXT PRIORITY
+### M4: Agents with Reflection (Week 6-7) ✅ COMPLETED ✨
 
 **Goal**: Agents gain self-awareness through LLM-powered reflection on their memories.
 
-**Value Delivered**:
-- Agents generate insights about their experiences
-- Higher-level understanding emerges from raw memories
-- Reflection-based decision making
+**Status**: ✅ COMPLETED with automatic reflection and beautiful UX
+**Value Delivered**: 
+- ✅ Agents automatically generate insights when importance accumulates (threshold: 15.0)
+- ✅ LLM-powered pattern recognition from memory analysis
+- ✅ Reflections stored as high-importance memories (8.0) with supporting citations
+- ✅ Beautiful cyan-themed reflection panels in terminal UI
+- ✅ Memory-influenced decision making using reflection insights
 
-**Implementation Strategy**:
-- Reflection engine that triggers when importance accumulates
-- LLM integration for generating insights
-- Reflections become special high-importance memories
+**Implementation Strategy**: ✅ COMPLETED
+- ✅ ReflectionEngine with configurable importance threshold triggering
+- ✅ LLM integration for generating sophisticated insights from memory patterns
+- ✅ Reflections become special high-importance memories that influence future decisions
+- ✅ Full integration with existing memory and simulation systems
 
-**Tasks**:
-- [ ] Implement ReflectionEngine with importance threshold triggering
-- [ ] LLM prompts for generating reflections from memories
-- [ ] Store reflections as special memories with citations
-- [ ] Update agent behavior to consider reflections
-- [ ] CLI to trigger and inspect reflections
+**Tasks**: ✅ ALL COMPLETED
+- ✅ Implement ReflectionEngine with importance threshold triggering
+- ✅ LLM prompts for generating reflections from memories
+- ✅ Store reflections as special memories with citations
+- ✅ Update agent behavior to consider reflections in decision making
+- ✅ CLI commands to trigger and inspect reflections
+- ✅ Beautiful terminal UI for reflection display
+- ✅ Automatic reflection triggering during simulation
+- ✅ Comprehensive testing and validation
 
-**Deliverables**:
+**Actual Deliverables**:
 ```bash
-# After M4:
-> reflect isabella
-Generated 3 new reflections for Isabella:
-1. "I've been noticing that John seems more isolated lately - he might need a friend"
-2. "The cafe becomes more lively when people interact with each other"  
-3. "My role as cafe owner puts me in a unique position to connect people"
+# After M4 (COMPLETED):
+> python main.py reflect isabella
+Generated 3 reflections for Isabella Rodriguez!
 
-> mem isabella --type reflection
-Recent reflections:
-- I should create more opportunities for neighbors to meet (importance: 8)
-- John and Maria would probably get along well (importance: 7)
+Generated Reflections:
+1. **Isabella is craving a sense of community and stability after transitioning between spaces**
+2. **Isabella's creative energy is fueled by her interactions with people and environments**  
+3. **Isabella is learning to appreciate the value of downtime and reflection**
+
+> python main.py agent isabella --reflections
+Recent reflections for isabella:
+1. **Isabella's creative energy is fueled by her interactions...** (importance: 8.0) [17:01]
+   Based on 12 memories
+
+# Automatic reflection during simulation:
+╭─────────────────────────── 💡 Isabella Rodriguez ────────────────────────────╮
+│  🧠 REFLECTION GENERATED                                                     │
+│  💭 Generated 3 new insights:                                                │
+│  1. **Isabella is craving a sense of community and stability...**            │
+╰──────────────────────────────────────────────────────────────────────────────╯
 ```
+
+**Files Delivered**:
+- ✅ `src/simulacra/agents/reflection_engine.py` (new - 294 lines of sophisticated reflection logic)
+- ✅ `src/simulacra/simulation/simulation_controller.py` (updated - automatic reflection integration)
+- ✅ `src/simulacra/storage/sqlite_store.py` (updated - reflection storage methods)
+- ✅ `src/simulacra/logging/simulation_logger.py` (updated - reflection logging)
+- ✅ `src/simulacra/logging/rich_terminal_logger.py` (updated - beautiful reflection panels)
+- ✅ `src/simulacra/logging/data_exporter.py` (updated - reflection data export)
+- ✅ `src/simulacra/cli/main.py` (updated - reflection commands and viewing)
+- ✅ `src/simulacra/config/settings.py` (updated - configurable reflection threshold)
+- ✅ `main.py` (updated - CLI help with reflection examples)
+
+**Key Achievement**: Agents now naturally reflect when their accumulated experiences reach the importance threshold, generating sophisticated insights about their behavioral patterns, relationships, and growth. The system provides complete transparency into the reflection process with beautiful UX and automatic triggering.
 
 ---
 
-### M5: Agents with Planning (Week 8-9)
+### Enhanced Cognitive Logging ✅ COMPLETED 🔍
+
+**Goal**: Complete transparency into agent cognitive processes for debugging, research, and understanding.
+
+**Status**: ✅ COMPLETED with emoji-coded process identification
+**Value Delivered**:
+- ✅ Complete visibility into every LLM call with cognitive context
+- ✅ Agent-specific process tracking (which agent is thinking/remembering/reflecting)
+- ✅ Beautiful emoji-coded process identification for easy scanning
+- ✅ Process completion confirmation with results
+- ✅ Perfect for debugging AI behavior and research analysis
+
+**Implementation Strategy**: ✅ COMPLETED
+- ✅ Enhanced logging throughout LLM service, memory manager, and behavior systems
+- ✅ Emoji-coded cognitive process types for immediate visual identification
+- ✅ Agent context included in every cognitive operation log
+- ✅ Process start and completion logging for full traceability
+
+**Cognitive Processes Tracked**:
+- 🔍 Memory retrieval (semantic search with query context)
+- 🎭 Agent decision making (thinking and action selection)  
+- 📊 Memory importance scoring (LLM-based evaluation)
+- 🔤 Embedding generation (vector indexing)
+- 🧠 Reflection generation (insight synthesis)
+
+**Actual Logging Output**:
+```bash
+🔍 COGNITIVE PROCESS: Retrieving relevant memories for isabella - query: 'Currently at Isabella's Apartment...'
+🎯 MEMORY RETRIEVAL: Found 3 relevant memories for isabella
+🎭 COGNITIVE PROCESS: Isabella Rodriguez is thinking and making decisions (location: unknown)
+🎯 DECISION COMPLETE: Isabella Rodriguez chose 'wait' action
+📊 COGNITIVE PROCESS: Scoring memory importance for Isabella Rodriguez - 'I waited for 5 minutes...'
+📈 IMPORTANCE SCORED: Isabella Rodriguez memory = 4.0/10
+🔤 COGNITIVE PROCESS: Generating embedding for isabella memory - 'I waited for 5 minutes...'
+💾 EMBEDDING STORED: isabella memory embedded and indexed
+🧠 COGNITIVE PROCESS: Generating reflection insights for Isabella Rodriguez (based on 16 memories)
+✨ REFLECTION COMPLETE: Generated 3 insights for Isabella Rodriguez
+```
+
+**Files Enhanced**:
+- ✅ `src/simulacra/llm/llm_service.py` (enhanced - reflection logging)
+- ✅ `src/simulacra/simulation/llm_behavior.py` (enhanced - decision making logging)
+- ✅ `src/simulacra/agents/memory_manager.py` (enhanced - memory process logging)
+
+**Key Achievement**: Every cognitive process is now completely transparent with beautiful, scannable logging. Perfect correlation between HTTP requests and cognitive context enables easy debugging, research analysis, and understanding of agent AI behavior.
+
+---
+
+### M5: Agents with Planning (Week 8-9) 🎯 NEXT PRIORITY
 
 **Goal**: Agents act with purpose, making plans and working toward goals.
 
