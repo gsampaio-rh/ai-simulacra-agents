@@ -101,8 +101,10 @@ def status():
 
 @cli.command()
 @click.argument('agent_id')
-def agent(agent_id: str):
-    """Show details for a specific agent."""
+@click.option('--memories', '-m', default=10, help='Number of recent memories to show')
+@click.option('--query', '-q', default=None, help='Query memories using semantic search')
+def agent(agent_id: str, memories: int, query: str):
+    """Show details for a specific agent including memories."""
     async def _agent():
         global sim_controller
         sim_controller = SimulationController()
@@ -112,6 +114,52 @@ def agent(agent_id: str):
         if not details:
             console.print(f"[red]Agent '{agent_id}' not found[/red]")
             return
+        
+        # Show recent memories
+        try:
+            if query:
+                console.print(f"\n[bold cyan]Memories for '{query}' (agent: {agent_id}):[/bold cyan]")
+                results = await sim_controller.memory_manager.retrieve_relevant_memories(
+                    agent_id, query, memories
+                )
+                
+                if not results:
+                    console.print(f"[yellow]No relevant memories found for query: '{query}'[/yellow]")
+                else:
+                    for i, result in enumerate(results, 1):
+                        memory = result.memory
+                        score_text = Text()
+                        score_text.append(f"{i}. ", style="bold")
+                        score_text.append(f"{memory.content}", style="white")
+                        score_text.append(f"\n   Score: {result.score:.3f} ", style="dim")
+                        score_text.append(f"(semantic: {result.semantic_score:.3f}, ", style="dim green")
+                        score_text.append(f"recency: {result.recency_score:.3f}, ", style="dim yellow")
+                        score_text.append(f"importance: {result.importance_score:.3f})", style="dim red")
+                        
+                        timestamp = memory.timestamp.strftime("%H:%M")
+                        score_text.append(f" [{timestamp}]", style="dim blue")
+                        
+                        console.print(score_text)
+            else:
+                recent_memories = await sim_controller.memory_manager.get_recent_memories(agent_id, memories)
+                if recent_memories:
+                    console.print(f"\n[bold cyan]Recent memories for {agent_id}:[/bold cyan]")
+                    for i, memory in enumerate(recent_memories, 1):
+                        memory_text = Text()
+                        memory_text.append(f"{i}. ", style="bold")
+                        memory_text.append(f"{memory.content}", style="white")
+                        memory_text.append(f" (importance: {memory.importance_score:.1f}, ", style="dim")
+                        memory_text.append(f"{memory.memory_type.value})", style="dim")
+                        
+                        timestamp = memory.timestamp.strftime("%H:%M")
+                        memory_text.append(f" [{timestamp}]", style="dim blue")
+                        
+                        console.print(memory_text)
+                else:
+                    console.print(f"[yellow]No memories found for agent '{agent_id}'[/yellow]")
+            
+        except Exception as e:
+            console.print(f"[red]Error retrieving memories: {e}[/red]")
         
         await sim_controller.cleanup()
     
@@ -175,6 +223,17 @@ def interactive():
                         details = sim_controller.get_agent_details(agent_id)
                         if details:
                             _display_agent_details(details)
+                            # Also show recent memories in interactive mode
+                            try:
+                                memories = await sim_controller.memory_manager.get_recent_memories(agent_id, 5)
+                                if memories:
+                                    console.print(f"\n[bold cyan]Recent memories for {agent_id}:[/bold cyan]")
+                                    for i, memory in enumerate(memories, 1):
+                                        console.print(f"  {i}. {memory.content} (importance: {memory.importance_score:.1f})")
+                                else:
+                                    console.print(f"[yellow]No memories found for '{agent_id}'[/yellow]")
+                            except Exception as e:
+                                console.print(f"[red]Error retrieving memories: {e}[/red]")
                         else:
                             console.print(f"[red]Agent '{agent_id}' not found[/red]")
                     else:

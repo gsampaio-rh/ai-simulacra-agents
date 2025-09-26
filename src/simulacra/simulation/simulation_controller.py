@@ -4,12 +4,14 @@ import asyncio
 import logging
 from typing import Dict, List, Optional
 
+from ..agents.memory_manager import MemoryManager
 from ..config import get_settings
 from ..config.agent_config import AgentConfigLoader
 from ..config.world_config import WorldConfigLoader
 from ..logging.simulation_logger import SimulationLogger
 from ..models.agent import Agent
 from ..storage.sqlite_store import SQLiteStore
+from ..storage.vector_store import VectorStore
 from .action_executor import ActionExecutor
 from .llm_behavior import LLMBehavior
 from ..llm.llm_service import LLMService
@@ -35,6 +37,7 @@ class SimulationController:
         
         # Core components
         self.storage = SQLiteStore(self.settings.sqlite_db_path)
+        self.vector_store = VectorStore()
         self.world_config_loader = WorldConfigLoader(self.settings.world_config_path)
         self.agent_config_loader = AgentConfigLoader(self.settings.agents_config_path)
         
@@ -43,7 +46,12 @@ class SimulationController:
         self.time_manager = TimeManager(self.settings.tick_duration_minutes)
         self.action_executor = ActionExecutor(self.world_manager)
         self.llm_service = LLMService(self.settings)
-        self.behavior_system = LLMBehavior(self.world_manager, self.llm_service)
+        
+        # Memory system
+        self.memory_manager = MemoryManager(self.storage, self.vector_store, self.llm_service)
+        
+        # Behavior system with memory integration
+        self.behavior_system = LLMBehavior(self.world_manager, self.llm_service, self.memory_manager)
         
         # State
         self.agents: Dict[str, Agent] = {}
@@ -62,6 +70,9 @@ class SimulationController:
         
         # Initialize storage
         await self.storage.initialize_schema()
+        
+        # Initialize vector store
+        self.vector_store.initialize_collections()
         
         # Initialize world
         await self.world_manager.initialize()
@@ -216,7 +227,15 @@ class SimulationController:
             else:
                 logger.warning(f"[{self.time_manager.format_tick_time(tick)}] {agent.name}: Failed - {result.message}")
             
-            # TODO: In M3, we'll add memory formation here
+            # M3: Form memory from this action
+            try:
+                memory = await self.memory_manager.form_memory_from_action(
+                    agent, action, result, location_name
+                )
+                logger.debug(f"Formed memory for {agent.name}: {memory.content[:50]}... (importance: {memory.importance_score:.1f})")
+            except Exception as e:
+                logger.error(f"Failed to form memory for {agent.name}: {e}")
+            
             # TODO: In M4, we'll add reflection checking here
             # TODO: In M5, we'll add planning updates here
         except Exception as e:

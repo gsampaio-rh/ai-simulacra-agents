@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 from ..models.agent import Agent, AgentState
 from ..models.event import Event
-from ..models.memory import Memory, Reflection
+from ..models.memory import Memory, Reflection, MemoryType
 from ..models.planning import DailyPlan
 from ..models.world import Place, WorldObject, AgentLocation
 
@@ -200,7 +200,7 @@ class SQLiteStore:
             str(memory.id),
             memory.agent_id,
             memory.content,
-            memory.memory_type.value,
+            memory.memory_type.value if hasattr(memory.memory_type, 'value') else memory.memory_type,
             memory.timestamp.isoformat(),
             memory.importance_score,
             memory.embedding_id,
@@ -249,7 +249,7 @@ class SQLiteStore:
                 id=UUID(row[0]),
                 agent_id=row[1],
                 content=row[2],
-                memory_type=row[3],
+                memory_type=row[3],  # Let the Memory model handle string->enum conversion
                 timestamp=datetime.fromisoformat(row[4]),
                 importance_score=row[5],
                 embedding_id=row[6],
@@ -258,6 +258,32 @@ class SQLiteStore:
             memories.append(memory)
         
         return memories
+    
+    async def get_memory(self, memory_id: str) -> Optional[Memory]:
+        """Get a specific memory by ID."""
+        await self.connect()
+        
+        cursor = await self._connection.execute("""
+            SELECT id, agent_id, content, memory_type, timestamp,
+                   importance_score, embedding_id, location
+            FROM memories
+            WHERE id = ?
+        """, (memory_id,))
+        
+        row = await cursor.fetchone()
+        if not row:
+            return None
+        
+        return Memory(
+            id=UUID(row[0]),
+            agent_id=row[1],
+            content=row[2],
+            memory_type=row[3],  # Let the Memory model handle string->enum conversion
+            timestamp=datetime.fromisoformat(row[4]),
+            importance_score=row[5],
+            embedding_id=row[6],
+            location=row[7]
+        )
     
     # Event operations
     async def add_event(self, event: Event) -> None:

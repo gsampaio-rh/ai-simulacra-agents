@@ -2,10 +2,10 @@
 
 from datetime import datetime
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Union
 from uuid import UUID, uuid4
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class MemoryType(Enum):
@@ -24,7 +24,7 @@ class Memory(BaseModel):
     id: UUID = Field(default_factory=uuid4)
     agent_id: str = Field(..., description="ID of the agent who owns this memory")
     content: str = Field(..., description="The actual memory content")
-    memory_type: MemoryType = Field(default=MemoryType.PERCEPTION)
+    memory_type: Union[MemoryType, str] = Field(default=MemoryType.PERCEPTION)
     timestamp: datetime = Field(default_factory=datetime.utcnow)
     importance_score: float = Field(
         default=0.0, 
@@ -40,6 +40,14 @@ class Memory(BaseModel):
         default=None,
         description="Location where this memory was formed"
     )
+    
+    @field_validator('memory_type')
+    @classmethod
+    def validate_memory_type(cls, v):
+        """Convert string to MemoryType enum if needed."""
+        if isinstance(v, str):
+            return MemoryType(v)
+        return v
     
     class Config:
         """Pydantic configuration."""

@@ -28,7 +28,7 @@ class OllamaEmbeddingResponse(BaseModel):
     """Embedding response from Ollama API."""
     
     embedding: List[float]
-    model: str
+    model: Optional[str] = None
 
 
 class OllamaError(Exception):

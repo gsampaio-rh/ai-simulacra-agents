@@ -4,6 +4,7 @@ import logging
 import re
 from typing import Dict, List, Optional, Tuple
 
+from ..agents.memory_manager import MemoryManager
 from ..llm.llm_service import LLMService
 from ..models.action import Action, ActionType, MoveAction, WaitAction, ObserveAction, InteractAction
 from ..models.agent import Agent
@@ -15,15 +16,22 @@ logger = logging.getLogger(__name__)
 class LLMBehavior:
     """LLM-powered behavior system that uses real AI reasoning for agent decisions."""
     
-    def __init__(self, world_manager: WorldManager, llm_service: Optional[LLMService] = None):
+    def __init__(
+        self, 
+        world_manager: WorldManager, 
+        llm_service: Optional[LLMService] = None,
+        memory_manager: Optional[MemoryManager] = None
+    ):
         """Initialize LLM behavior system.
         
         Args:
             world_manager: World state manager
             llm_service: LLM service for generating decisions (will create if None)
+            memory_manager: Memory manager for retrieving relevant memories (optional)
         """
         self.world_manager = world_manager
         self.llm_service = llm_service or LLMService()
+        self.memory_manager = memory_manager
     
     async def choose_action_with_reasoning(self, agent: Agent) -> Tuple[Action, str]:
         """Choose an action for an agent using LLM reasoning.
@@ -70,7 +78,7 @@ class LLMBehavior:
             agent: The agent
             
         Returns:
-            Context dictionary with current situation
+            Context dictionary with current situation and memories
         """
         current_location = self.world_manager.get_agent_location(agent.id)
         
@@ -97,6 +105,29 @@ class LLMBehavior:
             dest_name = dest_info["name"] if dest_info else place_id
             available_destinations.append(dest_name)
         
+        # Retrieve relevant memories if memory manager is available
+        relevant_memories = []
+        if self.memory_manager:
+            try:
+                # Build context string for memory retrieval
+                memory_context = f"Currently at {place_name}. "
+                if other_agents:
+                    memory_context += f"Other people here: {', '.join(other_agents)}. "
+                if agent.state.current_task:
+                    memory_context += f"Current task: {agent.state.current_task}. "
+                memory_context += f"Energy: {agent.state.energy}%, Mood: {agent.state.mood}/10"
+                
+                # Retrieve relevant memories
+                memory_results = await self.memory_manager.retrieve_relevant_memories(
+                    agent.id, 
+                    memory_context, 
+                    limit=3
+                )
+                relevant_memories = [result.memory for result in memory_results]
+                
+            except Exception as e:
+                logger.warning(f"Failed to retrieve memories for {agent.name}: {e}")
+        
         return {
             "current_location": current_location,
             "place_name": place_name,
@@ -105,7 +136,8 @@ class LLMBehavior:
             "available_destinations": available_destinations,
             "agent_energy": agent.state.energy,
             "agent_mood": agent.state.mood,
-            "current_task": agent.state.current_task
+            "current_task": agent.state.current_task,
+            "relevant_memories": relevant_memories
         }
     
     async def _generate_llm_decision(self, agent: Agent, context: Dict) -> Tuple[Action, str]:
@@ -186,6 +218,14 @@ class LLMBehavior:
         else:
             task_context = "No specific task at the moment"
         
+        # Build memory context
+        memory_context = ""
+        if context['relevant_memories']:
+            memory_context = "Recent relevant memories:\n"
+            for i, memory in enumerate(context['relevant_memories'], 1):
+                memory_context += f"  {i}. {memory.content}\n"
+            memory_context += "\nConsider these experiences when deciding what to do next."
+        
         prompt = f"""You are {agent.name}, a character in a social simulation.
 
 Your background: {agent.bio}
@@ -199,7 +239,9 @@ Current situation:
 - {energy_context}
 - {task_context}
 
-What would you like to do next? Think about what this character would naturally want to do given their personality, current situation, and social context.
+{memory_context}
+
+What would you like to do next? Think about what this character would naturally want to do given their personality, current situation, social context, and past experiences.
 
 Available actions:
 1. MOVE to another location (specify which one from the available destinations)
@@ -209,11 +251,11 @@ Available actions:
 
 Please respond in this exact format:
 
-REASONING: [Your thoughts as {agent.name} - what are you thinking and feeling? Why do you want to take this action? Be authentic to your personality and situation]
+REASONING: [Your thoughts as {agent.name} - what are you thinking and feeling? Why do you want to take this action? Be authentic to your personality and situation. Consider how your past experiences influence this decision]
 
 ACTION: [Choose exactly one: MOVE to [destination] | WAIT [reason] | OBSERVE | INTERACT [with what/whom]]
 
-Remember: You are {agent.name}, with the personality traits "{agent.personality}". Think and act in character!"""
+Remember: You are {agent.name}, with the personality traits "{agent.personality}". Think and act in character based on your experiences!"""
 
         return prompt
     

@@ -81,7 +81,7 @@ class VectorStore:
         # Prepare metadata
         metadata = {
             "agent_id": memory.agent_id,
-            "memory_type": memory.memory_type.value,
+            "memory_type": memory.memory_type.value if hasattr(memory.memory_type, 'value') else memory.memory_type,
             "timestamp": memory.timestamp.isoformat(),
             "importance": memory.importance_score,
             "location": memory.location or "",
@@ -147,7 +147,9 @@ class VectorStore:
             if results["ids"]:
                 for memory_id, distance in zip(results["ids"][0], results["distances"][0]):
                     # Convert distance to similarity (Chroma uses cosine distance)
-                    similarity = 1.0 - distance
+                    # Clamp distance to reasonable range and convert to 0-1 similarity
+                    clamped_distance = max(0.0, min(2.0, distance))  # Cosine distance is typically 0-2
+                    similarity = 1.0 - (clamped_distance / 2.0)  # Convert to 0-1 similarity
                     memory_similarities.append((memory_id, similarity))
             
             logger.debug(f"Found {len(memory_similarities)} similar memories for agent {agent_id}")
