@@ -28,17 +28,28 @@ wheels/
 memory.db
 *.log
 
-# Simulation output and logging
+# Simulation data and output
+data/
 output/
 demo_output/
 session_*/
+sim_*/
 *.zip
 
-# IDE
+# Database files
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# IDE and Editor
 .vscode/
 .idea/
+.cursor/
 *.swp
 *.swo
+*~
 
 # OS
 .DS_Store
@@ -57,3 +68,20 @@ htmlcov/
 # Temporary files
 *.tmp
 *.temp
+
+# Vector databases and embeddings
+*.faiss
+*.index
+chroma.db
+chromadb/
+
+# Model artifacts and caches
+models/
+checkpoints/
+*.ckpt
+*.pth
+*.model
+
+# LLM and AI service logs
+ollama.log
+*.jsonl
