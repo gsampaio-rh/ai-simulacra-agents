@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     
     # Simulation settings
     tick_duration_minutes: int = Field(default=5, env="TICK_DURATION_MINUTES")
-    reflection_threshold: float = Field(default=30.0, env="REFLECTION_THRESHOLD")
+    reflection_threshold: float = Field(default=15.0, env="REFLECTION_THRESHOLD")
     max_agents: int = Field(default=50, env="MAX_AGENTS")
     
     # Retrieval settings

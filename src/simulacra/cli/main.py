@@ -103,7 +103,8 @@ def status():
 @click.argument('agent_id')
 @click.option('--memories', '-m', default=10, help='Number of recent memories to show')
 @click.option('--query', '-q', default=None, help='Query memories using semantic search')
-def agent(agent_id: str, memories: int, query: str):
+@click.option('--reflections', '-r', is_flag=True, help='Show agent reflections')
+def agent(agent_id: str, memories: int, query: str, reflections: bool):
     """Show details for a specific agent including memories."""
     async def _agent():
         global sim_controller
@@ -161,9 +162,79 @@ def agent(agent_id: str, memories: int, query: str):
         except Exception as e:
             console.print(f"[red]Error retrieving memories: {e}[/red]")
         
+        # Show reflections if requested
+        if reflections:
+            try:
+                console.print(f"\n[bold cyan]Recent reflections for {agent_id}:[/bold cyan]")
+                agent_reflections = await sim_controller.reflection_engine.get_agent_reflections(agent_id, 5)
+                
+                if agent_reflections:
+                    for i, reflection in enumerate(agent_reflections, 1):
+                        reflection_text = Text()
+                        reflection_text.append(f"{i}. ", style="bold")
+                        reflection_text.append(f"{reflection.content}", style="italic bright_cyan")
+                        reflection_text.append(f" (importance: {reflection.importance_score:.1f})", style="dim")
+                        
+                        timestamp = reflection.timestamp.strftime("%H:%M")
+                        reflection_text.append(f" [{timestamp}]", style="dim blue")
+                        
+                        console.print(reflection_text)
+                        
+                        # Show supporting memories count
+                        if reflection.supporting_memories:
+                            console.print(f"   [dim]Based on {len(reflection.supporting_memories)} memories[/dim]")
+                else:
+                    console.print(f"[yellow]No reflections found for agent '{agent_id}'[/yellow]")
+                    console.print(f"[dim]Importance accumulator: {details['state'].get('importance_accumulator', 0):.1f} / {sim_controller.settings.reflection_threshold}[/dim]")
+            
+            except Exception as e:
+                console.print(f"[red]Error retrieving reflections: {e}[/red]")
+        
         await sim_controller.cleanup()
     
     asyncio.run(_agent())
+
+
+@cli.command()
+@click.argument('agent_id')
+def reflect(agent_id: str):
+    """Manually trigger reflection for a specific agent."""
+    async def _reflect():
+        global sim_controller
+        sim_controller = SimulationController()
+        await sim_controller.initialize()
+        
+        # Find the agent
+        if agent_id not in sim_controller.agents:
+            console.print(f"[red]Agent '{agent_id}' not found[/red]")
+            available_agents = list(sim_controller.agents.keys())
+            if available_agents:
+                console.print(f"Available agents: {', '.join(available_agents)}")
+            return
+        
+        agent = sim_controller.agents[agent_id]
+        
+        console.print(f"[blue]Triggering reflection for {agent.name}...[/blue]")
+        console.print(f"Current importance accumulator: {agent.state.importance_accumulator:.1f}")
+        
+        try:
+            # Force reflection regardless of threshold
+            reflections = await sim_controller.reflection_engine.trigger_reflection(agent)
+            
+            if reflections:
+                console.print(f"[green]✅ Generated {len(reflections)} reflections for {agent.name}![/green]")
+                console.print("\n[bold cyan]Generated Reflections:[/bold cyan]")
+                for i, reflection in enumerate(reflections, 1):
+                    console.print(f"{i}. [italic]{reflection.content}[/italic]")
+            else:
+                console.print(f"[yellow]No reflections generated for {agent.name}[/yellow]")
+            
+        except Exception as e:
+            console.print(f"[red]Error generating reflections: {e}[/red]")
+        
+        await sim_controller.cleanup()
+    
+    asyncio.run(_reflect())
 
 
 @cli.command()
@@ -322,6 +393,16 @@ def _display_agent_details(details: dict):
     state_text.append(f"Status: {state.get('status', 'unknown')}\n", style="yellow")
     state_text.append(f"Energy: {state.get('energy', 0):.1f}/100\n", style="red" if state.get('energy', 0) < 50 else "green")
     state_text.append(f"Mood: {state.get('mood', 0):.1f}/10\n", style="blue")
+    
+    # Show importance accumulator and reflection progress
+    importance_acc = state.get('importance_accumulator', 0)
+    threshold = 15.0  # Should match settings.reflection_threshold
+    state_text.append(f"Reflection Progress: {importance_acc:.1f}/{threshold} ", style="cyan")
+    if importance_acc >= threshold:
+        state_text.append("(Ready to reflect!)\n", style="bright_cyan bold")
+    else:
+        progress_percent = (importance_acc / threshold) * 100
+        state_text.append(f"({progress_percent:.0f}%)\n", style="dim")
     
     current_task = state.get('current_task')
     if current_task:

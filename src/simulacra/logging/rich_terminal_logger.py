@@ -170,6 +170,49 @@ Autonomous Agent Simulation
             "metadata": metadata or {}
         })
     
+    def log_agent_reflection(
+        self,
+        agent_name: str,
+        reflection_count: int,
+        reflection_insights: List[str]
+    ) -> None:
+        """Log agent reflection generation with beautiful formatting."""
+        # Create reflection content
+        reflection_content = Text()
+        reflection_content.append(f"🧠 REFLECTION GENERATED\n", style="bold bright_cyan")
+        reflection_content.append(f"💭 Generated {reflection_count} new insights:\n\n", style="white")
+        
+        # Add each insight with numbering
+        for i, insight in enumerate(reflection_insights, 1):
+            reflection_content.append(f"{i}. ", style="bold bright_white")
+            reflection_content.append(f"{insight}\n", style="italic bright_cyan")
+            if i < len(reflection_insights):
+                reflection_content.append("\n")
+        
+        # Display with cyan theme for reflections
+        self.console.print(Panel(
+            reflection_content,
+            title=f"💡 {agent_name}",
+            border_style="bright_cyan",
+            padding=(1, 2),
+            width=100
+        ))
+        self.console.print()  # Add spacing
+        
+        # Store for data export
+        self._agent_actions.append({
+            "tick": self._tick_count,
+            "timestamp": datetime.now().isoformat(),
+            "agent_name": agent_name,
+            "action": "reflection",
+            "result": f"Generated {reflection_count} reflections",
+            "success": True,
+            "metadata": {
+                "reflection_count": reflection_count,
+                "insights": reflection_insights
+            }
+        })
+    
     def _create_mini_energy_bar(self, energy: float) -> Text:
         """Create a compact energy bar."""
         bar_length = 8

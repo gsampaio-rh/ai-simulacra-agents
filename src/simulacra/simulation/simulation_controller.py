@@ -5,6 +5,7 @@ import logging
 from typing import Dict, List, Optional
 
 from ..agents.memory_manager import MemoryManager
+from ..agents.reflection_engine import ReflectionEngine
 from ..config import get_settings
 from ..config.agent_config import AgentConfigLoader
 from ..config.world_config import WorldConfigLoader
@@ -49,6 +50,11 @@ class SimulationController:
         
         # Memory system
         self.memory_manager = MemoryManager(self.storage, self.vector_store, self.llm_service)
+        
+        # Reflection system
+        self.reflection_engine = ReflectionEngine(
+            self.memory_manager, self.storage, self.llm_service, self.settings
+        )
         
         # Behavior system with memory integration
         self.behavior_system = LLMBehavior(self.world_manager, self.llm_service, self.memory_manager)
@@ -233,10 +239,27 @@ class SimulationController:
                     agent, action, result, location_name
                 )
                 logger.debug(f"Formed memory for {agent.name}: {memory.content[:50]}... (importance: {memory.importance_score:.1f})")
+                
+                # M4: Update importance accumulator and check for reflection trigger
+                await self.reflection_engine.update_importance_accumulator(agent, memory.importance_score)
+                
+                # Check if agent should reflect
+                if await self.reflection_engine.should_reflect(agent):
+                    logger.info(f"Triggering reflection for {agent.name} (accumulated importance: {agent.state.importance_accumulator:.1f})")
+                    reflections = await self.reflection_engine.trigger_reflection(agent)
+                    
+                    if reflections:
+                        # Log reflection beautifully
+                        self.sim_logger.log_agent_reflection(
+                            agent.name,
+                            len(reflections),
+                            [r.content for r in reflections]
+                        )
+                        logger.info(f"Generated {len(reflections)} reflections for {agent.name}")
+                
             except Exception as e:
                 logger.error(f"Failed to form memory for {agent.name}: {e}")
             
-            # TODO: In M4, we'll add reflection checking here
             # TODO: In M5, we'll add planning updates here
         except Exception as e:
             logger.error(f"Error in _process_agent_tick for {agent.name}: {e}")

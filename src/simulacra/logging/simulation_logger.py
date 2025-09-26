@@ -56,6 +56,18 @@ class SimulationLogger:
             agent_name, action, result_message, success, metadata
         )
         
+    def log_agent_reflection(
+        self,
+        agent_name: str,
+        reflection_count: int,
+        reflection_insights: List[str]
+    ) -> None:
+        """Log agent reflection generation."""
+        self.rich_logger.log_agent_reflection(agent_name, reflection_count, reflection_insights)
+        
+        # Store reflection data for export
+        self.data_exporter.log_agent_reflection(agent_name, reflection_count, reflection_insights)
+        
     def log_tick_complete(self, agent_summaries: Dict[str, Any]) -> None:
         """Log completion of tick with agent status summary."""
         self.rich_logger.log_tick_complete(agent_summaries)

@@ -174,7 +174,7 @@ class SQLiteStore:
                 importance_accumulator = ?
             WHERE agent_id = ?
         """, (
-            agent_state.status.value,
+            agent_state.status.value if hasattr(agent_state.status, 'value') else agent_state.status,
             agent_state.current_location,
             agent_state.current_task,
             agent_state.energy,
@@ -382,6 +382,70 @@ class SQLiteStore:
         
         rows = await cursor.fetchall()
         return [row[0] for row in rows]
+    
+    # Reflection operations
+    async def add_reflection(self, reflection: Reflection) -> None:
+        """Add a reflection to the database."""
+        await self.connect()
+        
+        await self._connection.execute("""
+            INSERT INTO reflections (
+                id, agent_id, content, supporting_memories, 
+                timestamp, importance_score
+            ) VALUES (?, ?, ?, ?, ?, ?)
+        """, (
+            str(reflection.id),
+            reflection.agent_id,
+            reflection.content,
+            json.dumps([str(uuid) for uuid in reflection.supporting_memories]),
+            reflection.timestamp.isoformat(),
+            reflection.importance_score
+        ))
+        
+        await self._connection.commit()
+    
+    async def get_agent_reflections(
+        self, 
+        agent_id: str, 
+        limit: int = 10
+    ) -> List[Reflection]:
+        """Get recent reflections for an agent."""
+        await self.connect()
+        
+        cursor = await self._connection.execute("""
+            SELECT id, agent_id, content, supporting_memories, 
+                   timestamp, importance_score
+            FROM reflections
+            WHERE agent_id = ?
+            ORDER BY timestamp DESC
+            LIMIT ?
+        """, (agent_id, limit))
+        
+        rows = await cursor.fetchall()
+        reflections = []
+        
+        for row in rows:
+            supporting_memories_json = row[3]
+            supporting_memories = []
+            
+            if supporting_memories_json:
+                try:
+                    memory_strings = json.loads(supporting_memories_json)
+                    supporting_memories = [UUID(uuid_str) for uuid_str in memory_strings]
+                except (json.JSONDecodeError, ValueError) as e:
+                    logger.warning(f"Failed to parse supporting memories: {e}")
+            
+            reflection = Reflection(
+                id=UUID(row[0]),
+                agent_id=row[1],
+                content=row[2],
+                supporting_memories=supporting_memories,
+                timestamp=datetime.fromisoformat(row[4]),
+                importance_score=row[5]
+            )
+            reflections.append(reflection)
+        
+        return reflections
     
     # Utility methods
     async def get_database_stats(self) -> Dict[str, Any]:

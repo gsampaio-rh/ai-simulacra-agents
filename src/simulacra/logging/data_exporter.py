@@ -25,6 +25,17 @@ class DataExporter:
         self.base_output_dir.mkdir(exist_ok=True)
         self.console = Console()
     
+    def log_agent_reflection(
+        self,
+        agent_name: str,
+        reflection_count: int,
+        reflection_insights: List[str]
+    ) -> None:
+        """Log agent reflection data for export (placeholder method)."""
+        # This is handled by the rich logger's _agent_actions list
+        # No additional data export needed since reflections are stored as actions
+        pass
+    
     def export_simulation_data(
         self, 
         simulation_data: Dict[str, Any],
