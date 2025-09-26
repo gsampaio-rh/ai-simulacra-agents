@@ -1,0 +1,145 @@
+{
+  "places": [
+    {
+      "id": "cafe",
+      "name": "Community Cafe",
+      "description": "A cozy neighborhood cafe with comfortable seating, local art on the walls, and the aroma of fresh coffee. The perfect place for conversations and community gatherings.",
+      "capacity": 20,
+      "properties": {
+        "atmosphere": "cozy",
+        "noise_level": "moderate",
+        "lighting": "warm"
+      },
+      "connected_places": ["street", "apartment_1"]
+    },
+    {
+      "id": "street",
+      "name": "Main Street",
+      "description": "A quiet residential street lined with trees and small apartment buildings. The cafe sits at the corner, and the community garden is visible down the block.",
+      "capacity": 50,
+      "properties": {
+        "atmosphere": "peaceful",
+        "weather_dependent": true
+      },
+      "connected_places": ["cafe", "apartment_1", "apartment_2", "apartment_3", "garden", "square"]
+    },
+    {
+      "id": "apartment_1",
+      "name": "Isabella's Apartment",
+      "description": "A warm and inviting apartment above the cafe, decorated with plants and colorful artwork. The kitchen always smells like something delicious is cooking.",
+      "capacity": 5,
+      "properties": {
+        "privacy": "private",
+        "atmosphere": "homey"
+      },
+      "connected_places": ["cafe", "street"]
+    },
+    {
+      "id": "apartment_2", 
+      "name": "John's Apartment",
+      "description": "A minimalist apartment with a dedicated workspace featuring dual monitors and design sketches on the walls. Large windows provide excellent natural light.",
+      "capacity": 3,
+      "properties": {
+        "privacy": "private",
+        "atmosphere": "focused"
+      },
+      "connected_places": ["street"]
+    },
+    {
+      "id": "apartment_3",
+      "name": "Maria's Apartment", 
+      "description": "A cozy apartment filled with books, plants, and photos from years of teaching. The balcony overlooks the community garden.",
+      "capacity": 4,
+      "properties": {
+        "privacy": "private",
+        "atmosphere": "nurturing"
+      },
+      "connected_places": ["street", "garden"]
+    },
+    {
+      "id": "garden",
+      "name": "Community Garden",
+      "description": "A shared garden space where residents grow vegetables, herbs, and flowers. There are benches for sitting and paths for walking between the plots.",
+      "capacity": 15,
+      "properties": {
+        "atmosphere": "peaceful",
+        "weather_dependent": true,
+        "seasonal": true
+      },
+      "connected_places": ["street", "apartment_3"]
+    },
+    {
+      "id": "square",
+      "name": "Town Square",
+      "description": "A small public square with a fountain in the center, surrounded by benches and shade trees. Often used for community events and gatherings.",
+      "capacity": 100,
+      "properties": {
+        "atmosphere": "social",
+        "weather_dependent": true,
+        "event_space": true
+      },
+      "connected_places": ["street"]
+    }
+  ],
+  "objects": [
+    {
+      "id": "espresso_machine",
+      "name": "Professional Espresso Machine",
+      "description": "A gleaming stainless steel espresso machine that's the heart of the cafe",
+      "location": "cafe",
+      "properties": {
+        "condition": "excellent",
+        "requires_skill": true
+      },
+      "interactions": ["make_coffee", "clean", "maintain"],
+      "is_movable": false
+    },
+    {
+      "id": "cafe_oven",
+      "name": "Bakery Oven",
+      "description": "A professional oven used for baking pastries and bread",
+      "location": "cafe", 
+      "properties": {
+        "temperature": "variable",
+        "requires_skill": true
+      },
+      "interactions": ["bake", "preheat", "clean"],
+      "is_movable": false
+    },
+    {
+      "id": "garden_tools",
+      "name": "Shared Garden Tools",
+      "description": "A collection of shovels, hoes, watering cans, and other gardening tools",
+      "location": "garden",
+      "properties": {
+        "condition": "good",
+        "shared": true
+      },
+      "interactions": ["garden", "water_plants", "dig", "plant"],
+      "is_movable": true
+    },
+    {
+      "id": "fountain",
+      "name": "Town Square Fountain", 
+      "description": "An ornate fountain with clear water and comfortable seating around the edge",
+      "location": "square",
+      "properties": {
+        "water_feature": true,
+        "seating": true
+      },
+      "interactions": ["sit", "listen", "observe"],
+      "is_movable": false
+    },
+    {
+      "id": "community_board",
+      "name": "Community Message Board",
+      "description": "A cork board where residents post announcements, events, and messages",
+      "location": "square",
+      "properties": {
+        "information": "community_events"
+      },
+      "interactions": ["read", "post_message", "check_events"],
+      "is_movable": false
+    }
+  ]
+}
